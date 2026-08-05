@@ -32,12 +32,13 @@ import MyCourses from "./pages/MyCourses";
 import LearnCourse from "./pages/LearnCourse";
 import AdminDashboard from "./pages/Admin/Dashboard/AdminDashboard";
 // import AddCourse from "./pages/AddCourse";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <Routes>
 
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
 
       <Route
