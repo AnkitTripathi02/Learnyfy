@@ -1,58 +1,40 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { getLessons } from "../../api/lessonApi";
 
-
 const Lesson = () => {
+    const { moduleId } = useParams<{ moduleId: string }>();
+    const [lessons, setLessons] = useState<any[]>([]);
 
-    const [lessons,setLessons] = useState<any[]>([]);
+    const fetchLessons = async () => {
+        try {
+            if (!moduleId) return;
 
+            const res = await getLessons(moduleId);
 
-    const fetchLessons = async()=>{
+            console.log("LESSON DATA", res);
 
-        try{
-
-            const res = await getLessons();
-
-            console.log("LESSON DATA",res.data);
-
-            setLessons(res.data);
-
-        }catch(error){
-
+            setLessons(res);
+        } catch (error) {
             console.log(error);
-
         }
+    };
 
-    }
-
-
-    useEffect(()=>{
+    useEffect(() => {
         fetchLessons();
-    },[]);
+    }, [moduleId]);
 
-
-
-    return(
+    return (
         <div>
+            <h1>Lessons</h1>
 
-            <h1>
-                Lessons
-            </h1>
-
-
-            {
-                lessons.map((lesson)=>(
-                    <div key={lesson.id}>
-                        {lesson.lesson_name}
-                    </div>
-                ))
-            }
-
-
+            {lessons.map((lesson) => (
+                <div key={lesson.id}>
+                    {lesson.lesson_name}
+                </div>
+            ))}
         </div>
-    )
-
-}
-
+    );
+};
 
 export default Lesson;

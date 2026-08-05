@@ -23,9 +23,7 @@ export const courseSchema = z.object({
 
     instructor: z.string().min(2),
 
-    price: z.coerce
-        .number()
-        .min(0, "Price must be greater than 0"),
+price: z.number().min(0, "Price must be greater than 0"),
 
     thumbnail: z.string().optional(),
 

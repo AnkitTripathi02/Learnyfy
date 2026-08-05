@@ -24,29 +24,30 @@ const CourseForm = ({
     onSuccess,
 }: CourseFormProps) => {
 
+const form = useForm<CourseFormData>({
+    resolver: zodResolver(courseSchema),
+    defaultValues: {
+        title: "",
+        slug: "",
+        short_description: "",
+        description: "",
+        category: "",
+        level: "",
+        language: "English",
+        duration: "",
+        instructor: "",
+        price: 0,
+        thumbnail: "",
+        is_published: false,
+    },
+});
+
 const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-} = useForm<CourseFormData>({
-        resolver: zodResolver(courseSchema),
-
-        defaultValues: {
-            title: "",
-            slug: "",
-            short_description: "",
-            description: "",
-            category: "",
-            level: "",
-            language: "English",
-            duration: "",
-            instructor: "",
-            price: 0,
-            thumbnail: "",
-            is_published: false,
-        },
-    });
+} = form;
 
     useEffect(() => {
 
@@ -303,7 +304,9 @@ const onSubmit = async (data: CourseFormData) => {
 
                     <input
                         type="number"
-                        {...register("price")}
+                            {...register("price", {
+        valueAsNumber: true,
+    })}
                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
