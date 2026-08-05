@@ -44,7 +44,6 @@ const Dashboard = () => {
     const loadDashboardStats = async () => {
         try {
             const response = await getDashboardStats();
-
             setStats(response.data);
         } catch (error) {
             console.error("Failed to load dashboard stats", error);
