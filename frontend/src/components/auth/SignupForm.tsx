@@ -11,6 +11,7 @@ import {
     FaBookOpen,
     FaUser,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 interface SignupFormProps {
     onLogin: () => void;
@@ -76,6 +77,26 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
             setLoading(false);
         }
     };
+
+      const handleGoogleLogin = async () => {
+        await Swal.fire({
+          icon: "info",
+          title: "Google Login Coming Soon 🚀",
+          text: "We're working on Google Sign-In. It will be available in the next update.",
+          background: "#161122",
+          color: "#ffffff",
+          confirmButtonText: "Got it",
+          confirmButtonColor: "#6366f1",
+          backdrop: `
+          rgba(0,0,0,0.7)
+          blur(8px)
+        `,
+          customClass: {
+            popup: "rounded-3xl",
+            confirmButton: "rounded-xl px-6 py-3",
+          },
+        });
+      };
     return (
         <div className="flex h-full items-center justify-center p-10">
             <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#141222]/90 backdrop-blur-xl p-8 shadow-[0_0_60px_rgba(139,92,246,0.15)]">
@@ -132,13 +153,13 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                             placeholder="Enter your email"
                             className="w-full bg-transparent p-3 text-white outline-none placeholder:text-gray-500"
                         />
-                        
+
                     </div>
                     {emailError && (
-                            <p className="mt-1 text-sm text-red-500">
-                                {emailError}
-                            </p>
-                        )}
+                        <p className="mt-1 text-sm text-red-500">
+                            {emailError}
+                        </p>
+                    )}
                 </div>
 
                 {/* Password */}
@@ -258,8 +279,12 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 </div>
 
                 {/* Google */}
-                <button className="w-full rounded-xl border border-white/10 py-4 text-white flex items-center justify-center gap-3 hover:border-purple-500 transition-all duration-300">
-                    <FaGoogle />
+                <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    className="w-full rounded-xl border border-white/10 py-4 text-white flex items-center justify-center gap-3 hover:border-purple-500 hover:bg-white/5 transition-all duration-300"
+                >
+                    <FaGoogle className="text-xl text-red-400" />
                     Continue with Google
                 </button>
 

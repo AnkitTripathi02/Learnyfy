@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaClock,
@@ -5,50 +6,57 @@ import {
   FaUserGraduate,
 } from "react-icons/fa";
 
-const courses = [
-  {
-    id: 1,
-    title: "React JS Masterclass",
-    instructor: "John Doe",
-    duration: "12 Hours",
-    price: "₹999",
-    rating: "4.8",
-    image:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=700",
-  },
-  {
-    id: 2,
-    title: "Python Complete Bootcamp",
-    instructor: "Jane Smith",
-    duration: "18 Hours",
-    price: "Free",
-    rating: "4.9",
-    image:
-      "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=700",
-  },
-  {
-    id: 3,
-    title: "Java Programming",
-    instructor: "David Wilson",
-    duration: "15 Hours",
-    price: "₹799",
-    rating: "4.7",
-    image:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=700",
-  },
-  {
-    id: 4,
-    title: "Full Stack Development",
-    instructor: "Robert Johnson",
-    duration: "30 Hours",
-    price: "₹1499",
-    rating: "5.0",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=700",
-  },
-];
+import { getCourses } from "../../api/courseApi";
+
+interface Course {
+  id: string;
+  title: string;
+  instructor?: string;
+  duration?: string;
+  price?: number | string;
+  thumbnail?: string;
+  rating?: number | string;
+}
 
 const FeaturedCourses = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadCourses = async () => {
+    try {
+      const response = await getCourses();
+
+      // Agar API direct array return karti hai
+      setCourses(response.filter((course: any) => course.is_published));
+
+      // Agar API { data: [] } return karti hai to isko use karo:
+      // setCourses(response.data);
+
+    } catch (error) {
+      console.error("Failed to load courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <h2 className="text-4xl font-bold">Featured Courses</h2>
+
+          <p className="mt-8 text-gray-500">
+            Loading courses...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id="courses"
@@ -68,7 +76,7 @@ const FeaturedCourses = () => {
 
         </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
           {courses.map((course) => (
 
@@ -78,7 +86,11 @@ const FeaturedCourses = () => {
             >
 
               <img
-                src={course.image}
+                src={
+                  course.thumbnail
+                    ? course.thumbnail
+                    : "https://placehold.co/600x350?text=LearnyFy"
+                }
                 alt={course.title}
                 className="h-52 w-full object-cover"
               />
@@ -91,23 +103,25 @@ const FeaturedCourses = () => {
 
                 <div className="mt-5 flex items-center gap-2 text-gray-600">
                   <FaUserGraduate />
-                  {course.instructor}
+                  {course.instructor || "LearnyFy"}
                 </div>
 
                 <div className="mt-3 flex items-center gap-2 text-gray-600">
                   <FaClock />
-                  {course.duration}
+                  {course.duration || "Self Paced"}
                 </div>
 
                 <div className="mt-3 flex items-center gap-2 text-yellow-500">
                   <FaStar />
-                  {course.rating}
+                  {course.rating ?? "5.0"}
                 </div>
 
                 <div className="mt-6 flex items-center justify-between">
 
                   <span className="text-2xl font-bold text-indigo-600">
-                    {course.price}
+                    {Number(course.price) === 0
+                      ? "Free"
+                      : `₹${Number(course.price).toFixed(0)}`}
                   </span>
 
                   <Link

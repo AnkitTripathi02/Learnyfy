@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { login } from "../../api/authApi";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface LoginFormProps {
   onSignup: () => void;
@@ -54,46 +55,129 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
   };
 
   const handleLogin = async () => {
+    // Email Validation
+    if (!email.trim()) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Email Required",
+        text: "Please enter your email address.",
+        background: "#161122",
+        color: "#ffffff",
+        confirmButtonColor: "#6366f1",
+        customClass: {
+          popup: "rounded-3xl",
+          confirmButton: "rounded-xl px-6 py-3",
+        },
+      });
 
-    if (!email) {
-      alert("Email is required");
       return;
     }
 
+    // Password Validation
     if (!validatePassword(password)) {
+      await Swal.fire({
+        icon: "warning",
+        title: "Invalid Password",
+        text: passwordError || "Please enter a valid password.",
+        background: "#161122",
+        color: "#ffffff",
+        confirmButtonColor: "#6366f1",
+        customClass: {
+          popup: "rounded-3xl",
+          confirmButton: "rounded-xl px-6 py-3",
+        },
+      });
+
       return;
     }
 
     try {
       setLoading(true);
 
-const response = await login({
-  email,
-  password,
-});
+      // Loading Popup
+      Swal.fire({
+        title: "Signing In...",
+        text: "Please wait while we verify your credentials.",
+        background: "#161122",
+        color: "#ffffff",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-localStorage.setItem(
-  "token",
-  response.data.access_token
-);
+      const response = await login({
+        email,
+        password,
+      });
 
-localStorage.setItem(
-  "user",
-  JSON.stringify(response.data.user)
-);
-
-navigate("/dashboard");
-
-    } catch (error: any) {
-
-      alert(
-        error?.response?.data?.message ||
-        "Login Failed"
+      localStorage.setItem(
+        "token",
+        response.data.access_token
       );
 
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.user)
+      );
+
+      Swal.close();
+
+      await Swal.fire({
+        icon: "success",
+        title: "Login Successful 🎉",
+        text: `Welcome back, ${response.data.user.full_name}!`,
+        background: "#161122",
+        color: "#ffffff",
+        confirmButtonColor: "#6366f1",
+        customClass: {
+          popup: "rounded-3xl",
+          confirmButton: "rounded-xl px-6 py-3",
+        },
+      });
+
+      navigate("/dashboard");
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text:
+          error?.response?.data?.message ||
+          error?.response?.data?.detail ||
+          "Invalid email or password.",
+        background: "#161122",
+        color: "#ffffff",
+        confirmButtonColor: "#ef4444",
+        customClass: {
+          popup: "rounded-3xl",
+          confirmButton: "rounded-xl px-6 py-3",
+        },
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    await Swal.fire({
+      icon: "info",
+      title: "Google Login Coming Soon 🚀",
+      text: "We're working on Google Sign-In. It will be available in the next update.",
+      background: "#161122",
+      color: "#ffffff",
+      confirmButtonText: "Got it",
+      confirmButtonColor: "#6366f1",
+      backdrop: `
+      rgba(0,0,0,0.7)
+      blur(8px)
+    `,
+      customClass: {
+        popup: "rounded-3xl",
+        confirmButton: "rounded-xl px-6 py-3",
+      },
+    });
   };
 
   return (
@@ -129,12 +213,20 @@ navigate("/dashboard");
           <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-4 focus-within:border-purple-500 transition-all">
             <FaEnvelope className="text-gray-400" />
 
-            <input
+            {/* <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500"
+            /> */}
+            <input
+              type="email"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500"
+              placeholder="Enter your email"
             />
           </div>
         </div>
@@ -150,14 +242,9 @@ navigate("/dashboard");
 
             <input
               type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
               value={password}
               maxLength={20}
-              onChange={(e) => {
-                const value = e.target.value;
-                setPassword(value);
-                validatePassword(value);
-              }}
-              placeholder="Enter your password"
               className="
               w-full
               bg-transparent
@@ -169,6 +256,11 @@ navigate("/dashboard");
               [-webkit-text-fill-color:white]
               [-webkit-box-shadow:0_0_0px_1000px_#1b1a2b_inset]
             "
+              onChange={(e) => {
+                const value = e.target.value;
+                setPassword(value);
+                validatePassword(value);
+              }}
             />
 
             <button
@@ -239,9 +331,13 @@ navigate("/dashboard");
         </div>
 
         {/* Google */}
-        <button className="w-full rounded-xl border border-white/10 py-4 text-white flex items-center justify-center gap-3 hover:border-purple-500 transition-all duration-300">
-          <FaGoogle />
-          Google
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full rounded-xl border border-white/10 py-4 text-white flex items-center justify-center gap-3 hover:border-purple-500 hover:bg-white/5 transition-all duration-300"
+        >
+          <FaGoogle className="text-xl text-red-400" />
+          Continue with Google
         </button>
 
         {/* Footer */}

@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 from models.course_model import Course
 from schemas.course_schema import (
@@ -20,8 +21,57 @@ def create_course(
 
 def get_all_courses(
     db: Session,
+    search=None,
+    category=None,
+    level=None,
+    language=None,
+    price=None,
+    duration=None,
 ):
-    return db.query(Course).all()
+
+    query = db.query(Course)
+
+    if search:
+        query = query.filter(
+            or_(
+                Course.title.ilike(f"%{search}%"),
+                Course.description.ilike(f"%{search}%"),
+            )
+        )
+
+    if category:
+        query = query.filter(
+            Course.category == category
+        )
+
+    if level:
+        query = query.filter(
+            Course.level == level
+        )
+
+    if language:
+        query = query.filter(
+            Course.language == language
+        )
+
+    if duration:
+        query = query.filter(
+            Course.duration == duration
+        )
+
+    if price:
+
+        if price == "Free":
+            query = query.filter(
+                Course.price == 0
+            )
+
+        elif price == "Paid":
+            query = query.filter(
+                Course.price > 0
+            )
+
+    return query.all()
 
 def get_course_by_id(
     db: Session,

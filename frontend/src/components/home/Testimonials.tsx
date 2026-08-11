@@ -26,74 +26,52 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="bg-white py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <div className="px-12">
+      <div className="text-center">
+        <h2 className="text-4xl font-bold text-gray-800">
+          What Our Students Say
+        </h2>
 
-        <div className="text-center">
+        <p className="mt-4 text-lg text-gray-500">
+          Thousands of students are growing their careers with LearnyFy.
+        </p>
+      </div>
 
-          <h2 className="text-4xl font-bold text-gray-800">
-            What Our Students Say
-          </h2>
+      <div className="mt-6 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        {testimonials.map((item, index) => (
+          <div
+            key={index}
+            className="rounded-3xl border border-gray-300 p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+          >
+            <div className="flex items-center gap-4">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="h-16 w-16 rounded-full object-cover"
+              />
 
-          <p className="mt-4 text-lg text-gray-500">
-            Thousands of students are growing their careers with LearnyFy.
-          </p>
+              <div>
+                <h3 className="text-xl font-bold">{item.name}</h3>
 
-        </div>
-
-        <div className="mt-16 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-
-          {testimonials.map((item, index) => (
-
-            <div
-              key={index}
-              className="rounded-3xl bg-gray-50 p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
-            >
-
-              <div className="flex items-center gap-4">
-
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-16 w-16 rounded-full object-cover"
-                />
-
-                <div>
-
-                  <h3 className="text-xl font-bold">
-                    {item.name}
-                  </h3>
-
-                  <p className="text-gray-500">
-                    {item.role}
-                  </p>
-
-                </div>
-
+                <p className="text-gray-500">{item.role}</p>
               </div>
-
-              <div className="mt-6 flex text-yellow-500">
-
-                <FaStar />
-                <FaStar />
-                <FaStar />
-                <FaStar />
-                <FaStar />
-
-              </div>
-
-              <p className="mt-6 leading-7 text-gray-600">
-                "{item.review}"
-              </p>
-
             </div>
 
-          ))}
+            <div className="mt-6 flex text-yellow-500">
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+              <FaStar />
+            </div>
 
-        </div>
-
+            <p className="mt-6 leading-7 text-gray-600">
+              "{item.review}"
+            </p>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 };
 

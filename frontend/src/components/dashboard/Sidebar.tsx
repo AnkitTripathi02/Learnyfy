@@ -33,11 +33,11 @@ const Sidebar = () => {
       title: "Dashboard",
       path: "/dashboard",
     },
-    {
-      icon: <FaGraduationCap />,
-      title: isAdmin ? "Course Management" : "My Courses",
-      path: isAdmin ? "/courses" : "/my-courses",
-    },
+{
+  icon: <FaGraduationCap />,
+  title: isAdmin ? "Course Management" : "My Courses",
+  path: isAdmin ? "/admin/courses" : "/my-courses",
+},
     {
       icon: <FaClipboardCheck />,
       title: "Practice",

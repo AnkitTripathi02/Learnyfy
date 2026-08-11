@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   FaFacebook,
   FaInstagram,
@@ -10,39 +11,33 @@ const Footer = () => {
   return (
     <footer
       id="contact"
-      className="bg-gray-900 text-gray-300"
+      className="bg-[#0f172a] text-gray-400"
     >
       <div className="mx-auto max-w-7xl px-6 py-16">
 
+        {/* Top */}
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
 
           {/* Logo */}
-
           <div>
-
             <div className="flex items-center gap-3">
-
               <FaGraduationCap className="text-4xl text-indigo-500" />
 
               <h2 className="text-3xl font-bold text-white">
                 LearnyFy
               </h2>
-
             </div>
 
-            <p className="mt-5 leading-7 text-gray-400">
+            <p className="mt-5 leading-8">
               Learn programming, Full Stack Development,
               Artificial Intelligence, Cloud Computing,
-              Data Science and many more technologies with
-              industry-ready courses.
+              Data Science and many more technologies
+              with industry-ready courses.
             </p>
-
           </div>
 
           {/* Quick Links */}
-
           <div>
-
             <h3 className="mb-5 text-xl font-bold text-white">
               Quick Links
             </h3>
@@ -50,35 +45,54 @@ const Footer = () => {
             <ul className="space-y-3">
 
               <li>
-                <a href="#home" className="hover:text-indigo-400">
+                <a
+                  href="#home"
+                  className="transition hover:text-indigo-400"
+                >
                   Home
                 </a>
               </li>
 
               <li>
-                <a href="#courses" className="hover:text-indigo-400">
+                <a
+                  href="#courses"
+                  className="transition hover:text-indigo-400"
+                >
                   Courses
                 </a>
               </li>
 
               <li>
-                <a href="#categories" className="hover:text-indigo-400">
+                <a
+                  href="#categories"
+                  className="transition hover:text-indigo-400"
+                >
                   Categories
                 </a>
               </li>
 
               <li>
-                <a href="#about" className="hover:text-indigo-400">
+                <a
+                  href="#about"
+                  className="transition hover:text-indigo-400"
+                >
                   About Us
                 </a>
               </li>
 
-            </ul>
+              <li>
+                <a
+                  href="#contact"
+                  className="transition hover:text-indigo-400"
+                >
+                  Contact
+                </a>
+              </li>
 
+            </ul>
           </div>
 
-          {/* Categories */}
-
+          {/* Popular Courses */}
           <div>
 
             <h3 className="mb-5 text-xl font-bold text-white">
@@ -87,22 +101,31 @@ const Footer = () => {
 
             <ul className="space-y-3">
 
-              <li>React Development</li>
+              <li className="cursor-pointer transition hover:text-white">
+                React Development
+              </li>
 
-              <li>Python Programming</li>
+              <li className="cursor-pointer transition hover:text-white">
+                Python Programming
+              </li>
 
-              <li>Java Development</li>
+              <li className="cursor-pointer transition hover:text-white">
+                Java Development
+              </li>
 
-              <li>Artificial Intelligence</li>
+              <li className="cursor-pointer transition hover:text-white">
+                Artificial Intelligence
+              </li>
 
-              <li>Data Science</li>
+              <li className="cursor-pointer transition hover:text-white">
+                Data Science
+              </li>
 
             </ul>
 
           </div>
 
           {/* Contact */}
-
           <div>
 
             <h3 className="mb-5 text-xl font-bold text-white">
@@ -110,7 +133,8 @@ const Footer = () => {
             </h3>
 
             <p>Email</p>
-            <p className="text-indigo-400">
+
+            <p className="mt-1 text-indigo-400">
               support@learnyfy.com
             </p>
 
@@ -120,13 +144,13 @@ const Footer = () => {
 
             <div className="mt-8 flex gap-5 text-2xl">
 
-              <FaFacebook className="cursor-pointer hover:text-indigo-400" />
+              <FaFacebook className="cursor-pointer transition hover:text-blue-500" />
 
-              <FaInstagram className="cursor-pointer hover:text-pink-500" />
+              <FaInstagram className="cursor-pointer transition hover:text-pink-500" />
 
-              <FaLinkedin className="cursor-pointer hover:text-blue-400" />
+              <FaLinkedin className="cursor-pointer transition hover:text-sky-500" />
 
-              <FaGithub className="cursor-pointer hover:text-white" />
+              <FaGithub className="cursor-pointer transition hover:text-white" />
 
             </div>
 
@@ -134,30 +158,39 @@ const Footer = () => {
 
         </div>
 
+        {/* Divider */}
         <hr className="my-10 border-gray-700" />
 
+        {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
 
-          <p>
+          <p className="text-sm">
             © {new Date().getFullYear()} LearnyFy.
             All Rights Reserved.
           </p>
 
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6 text-sm">
 
-            <a
-              href="/privacy"
-              className="hover:text-indigo-400"
+            <Link
+              to="/privacy"
+              className="transition hover:text-indigo-400"
             >
               Privacy Policy
-            </a>
+            </Link>
 
-            <a
-              href="/terms"
-              className="hover:text-indigo-400"
+            <Link
+              to="/terms"
+              className="transition hover:text-indigo-400"
             >
               Terms & Conditions
-            </a>
+            </Link>
+
+            <Link
+              to="/faq"
+              className="transition hover:text-indigo-400"
+            >
+              FAQ
+            </Link>
 
           </div>
 

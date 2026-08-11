@@ -1,11 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import LeftPanel from "../components/auth/LeftPanel";
 import LoginForm from "../components/auth/LoginForm";
 import SignupForm from "../components/auth/SignupForm";
 import Background from "../assets/Background.png";
 
+// const Login = () => {
+//   const [showSignup, setShowSignup] = useState(false);
+
 const Login = () => {
-  const [showSignup, setShowSignup] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const [showSignup, setShowSignup] = useState(
+        location.pathname === "/signup"
+    );
+    
+    useEffect(() => {
+    setShowSignup(location.pathname === "/signup");
+}, [location.pathname]);
+
+const handleSignup = () => {
+    setShowSignup(true);
+    navigate("/signup");
+};
 
   return (
     <div className="min-h-screen bg-[#090817] flex p-1">
@@ -29,7 +47,8 @@ const Login = () => {
                   : "translate-x-0 opacity-100 scale-100"
                 }`}
             >
-              <LoginForm onSignup={() => setShowSignup(true)} />
+              {/* <LoginForm onSignup={() => setShowSignup(true)} /> */}
+              <LoginForm onSignup={handleSignup} />
             </div>
 
             {/* Signup */}

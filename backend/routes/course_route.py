@@ -39,9 +39,24 @@ def create_new_course(
     response_model=list[CourseResponse],
 )
 def get_courses(
+    search: str | None = None,
+    category: str | None = None,
+    level: str | None = None,
+    language: str | None = None,
+    price: str | None = None,
+    duration: str | None = None,
     db: Session = Depends(get_db),
 ):
-    return get_all_courses(db)
+
+    return get_all_courses(
+        db=db,
+        search=search,
+        category=category,
+        level=level,
+        language=language,
+        price=price,
+        duration=duration,
+    )
 
 @router.get(
     "/{course_id}",

@@ -1,73 +1,104 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaGraduationCap } from "react-icons/fa";
 
 const Navbar = () => {
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+  const location = useLocation();
+  const navigate = useNavigate();
 
-        {/* Logo */}
+  const goToSection = (section: string) => {
+    // Agar already Home page par hain
+    if (location.pathname === "/") {
+      const element = document.getElementById(section);
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    } else {
+      // Kisi bhi doosre page se Home par jao
+      navigate(`/#${section}`);
+    }
+  };
+
+  return (
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#090817]/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+        {/* ================= LOGO ================= */}
+
         <Link
           to="/"
-          className="flex items-center gap-2 text-3xl font-bold text-indigo-600"
+          className="flex items-center gap-2 text-2xl font-bold text-indigo-500 transition hover:text-indigo-400"
         >
-          <FaGraduationCap className="text-4xl" />
+          <FaGraduationCap className="text-3xl" />
           LearnyFy
         </Link>
 
-        {/* Menu */}
-        <nav className="hidden items-center gap-10 md:flex">
+        {/* ================= MENU ================= */}
 
-          <a
-            href="#home"
-            className="font-medium text-gray-700 transition hover:text-indigo-600"
+        <nav className="hidden items-center gap-8 md:flex">
+
+          {/* Home */}
+          <Link
+            to="/"
+            className="font-medium text-gray-200 transition hover:text-indigo-400"
           >
             Home
-          </a>
+          </Link>
 
-          <a
-            href="#categories"
-            className="font-medium text-gray-700 transition hover:text-indigo-600"
+          {/* Categories */}
+          <button
+            type="button"
+            onClick={() => goToSection("categories")}
+            className="font-medium text-gray-200 transition hover:text-indigo-400"
           >
             Categories
-          </a>
+          </button>
 
-          <a
-            href="#courses"
-            className="font-medium text-gray-700 transition hover:text-indigo-600"
+          {/* Courses */}
+          <Link
+            to="/courses"
+            className="font-medium text-gray-200 transition hover:text-indigo-400"
           >
             Courses
-          </a>
+          </Link>
 
-          <a
-            href="#about"
-            className="font-medium text-gray-700 transition hover:text-indigo-600"
+          {/* About */}
+          <button
+            type="button"
+            onClick={() => goToSection("about")}
+            className="font-medium text-gray-200 transition hover:text-indigo-400"
           >
             About
-          </a>
+          </button>
 
-          <a
-            href="#contact"
-            className="font-medium text-gray-700 transition hover:text-indigo-600"
+          {/* Contact */}
+          <button
+            type="button"
+            onClick={() => goToSection("contact")}
+            className="font-medium text-gray-200 transition hover:text-indigo-400"
           >
             Contact
-          </a>
+          </button>
 
         </nav>
 
-        {/* Buttons */}
+        {/* ================= BUTTONS ================= */}
+
         <div className="flex items-center gap-3">
 
           <Link
             to="/login"
-            className="rounded-xl border border-indigo-600 px-6 py-2 font-semibold text-indigo-600 transition hover:bg-indigo-50"
+            className="rounded-xl border border-indigo-600 px-5 py-2 font-semibold text-indigo-400 transition hover:bg-indigo-600 hover:text-white"
           >
             Login
           </Link>
 
           <Link
             to="/signup"
-            className="rounded-xl bg-indigo-600 px-6 py-2 font-semibold text-white shadow-lg transition hover:bg-indigo-700"
+            className="hidden rounded-xl bg-indigo-600 px-5 py-2 font-semibold text-white shadow-lg transition hover:bg-indigo-500 sm:block"
           >
             Sign Up
           </Link>

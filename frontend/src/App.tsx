@@ -1,104 +1,135 @@
-// import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import Header from "./components/Header";
-// import Footer from "./components/Footer";
-// import Home from "./components/Home";
-// import About from "./components/About";
-// import Contact from "./components/Contact";
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Header />
-//       <div className='h-[88vh] border bg-gray-400 overflow-y-auto'>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="about" element={<About/>} />
-//         <Route path="contact" element={<Contact/>} />
-//       </Routes>
-//       </div>
-//       <Footer />
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import { Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Course from "./pages/Course";
+
+import Courses from "./pages/Courses";
 import CourseDetails from "./pages/CourseDetails";
 import MyCourses from "./pages/MyCourses";
 import LearnCourse from "./pages/LearnCourse";
+
 import AdminDashboard from "./pages/Admin/Dashboard/AdminDashboard";
-// import AddCourse from "./pages/AddCourse";
-import Home from "./pages/Home";
+import CourseManagement from "./pages/Admin/Course/CourseManagement";
+
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import Faq from "./pages/Faq";
+import NotFound from "./pages/NotFound";
+import CourseCompleted from "./pages/CourseCompleted";
+import Certificate from "./pages/Certificate";
+
 
 function App() {
-  return (
-    <Routes>
+    return (
+        <Routes>
 
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+            {/* ================= PUBLIC ROUTES ================= */}
 
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+            <Route path="/" element={<Home />} />
 
-      <Route
-        path="/courses"
-        element={
-          <ProtectedRoute>
-            <Course />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-  path="/courses/:id"
-  element={
-    <ProtectedRoute>
-      <CourseDetails />
-    </ProtectedRoute>
-  }
-/>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Login />} />
 
-<Route 
-    path="/my-courses" 
-    element={<MyCourses />}
-/>
+            <Route path="/courses" element={<Courses />} />
 
-<Route
-    path="/learn/:id"
-    element={
-        <ProtectedRoute>
-            <LearnCourse />
-        </ProtectedRoute>
-    }
-/>
+            <Route
+                path="/courses/:id"
+                element={<CourseDetails />}
+            />
 
-<Route
- path="/admin/dashboard"
- element={<AdminDashboard />}
-/>
+            <Route
+                path="/privacy"
+                element={<PrivacyPolicy />}
+            />
 
+            <Route
+                path="/terms"
+                element={<TermsAndConditions />}
+            />
 
-      {/* <Route
-    path="/courses/new"
-    element={
-        <ProtectedRoute>
-            <AddCourse />
-        </ProtectedRoute>
-    }
-/> */}
+            <Route
+                path="/faq"
+                element={<Faq />}
+            />
 
-    </Routes>
-  );
+            {/* ================= STUDENT ROUTES ================= */}
+
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/my-courses"
+                element={
+                    <ProtectedRoute>
+                        <MyCourses />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/learn/:id"
+                element={
+                    <ProtectedRoute>
+                        <LearnCourse />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/course/:id/completed"
+                element={
+                    <ProtectedRoute>
+                        <CourseCompleted />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/certificate/:id"
+                element={
+                    <ProtectedRoute>
+                        <Certificate />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ================= ADMIN ROUTES ================= */}
+
+            <Route
+                path="/admin/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <AdminDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/admin/courses"
+                element={
+                    <ProtectedRoute>
+                        <CourseManagement />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ================= 404 ================= */}
+
+            <Route
+                path="*"
+                element={<NotFound />}
+            />
+
+        </Routes>
+    );
 }
 
 export default App;

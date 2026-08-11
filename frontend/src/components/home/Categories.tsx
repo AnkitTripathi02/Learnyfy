@@ -96,7 +96,7 @@ const Categories = () => {
                 {item.courses}
               </p>
 
-              <button className="mt-6 rounded-lg border border-indigo-600 px-5 py-2 font-medium text-indigo-600 transition hover:bg-white hover:text-indigo-600 group-hover:border-white group-hover:text-white">
+              <button className="mt-6 rounded-lg border border-indigo-600 px-5 py-2 font-medium text-indigo-600 transition  hover:text-indigo-600 group-hover:border-white group-hover:text-white">
                 Explore
               </button>
 

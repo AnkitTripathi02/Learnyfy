@@ -4,22 +4,46 @@ import Categories from "../components/home/Categories";
 import FeaturedCourses from "../components/home/FeaturedCourses";
 import WhyChooseUs from "../components/home/WhyChooseUs";
 import Testimonials from "../components/home/Testimonials";
+import ContactForm from "../components/home/ContactForm";
 import Footer from "../components/home/Footer";
+import ScrollToTop from "../components/common/ScrollToTop";
 
 const Home = () => {
   return (
     <>
       <Navbar />
 
-      <main className="pt-16">
-        <Hero />
-        <Categories />
-        <FeaturedCourses />
-        <WhyChooseUs />
-        <Testimonials />
-      </main>
+<main className="pt-16">
 
-      <Footer />
+  <section id="home">
+    <Hero />
+  </section>
+
+  <section id="categories">
+    <Categories />
+  </section>
+
+  <section id="courses">
+    <FeaturedCourses />
+  </section>
+
+  {/* About */}
+  <section id="about" className="scroll-mt-24 space-y-10">
+    <WhyChooseUs />
+    <Testimonials />
+  </section>
+
+  {/* Contact */}
+  <section id="contact" className="scroll-mt-24">
+    <ContactForm />
+  </section>
+
+</main>
+
+<ScrollToTop />
+<Footer />
+
+
     </>
   );
 };

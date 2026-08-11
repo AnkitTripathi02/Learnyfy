@@ -10,6 +10,8 @@ from models.course_model import Course
 from models.module_model import Module
 from models.lesson_model import Lesson
 from models.enrollment_model import Enrollment
+from models.lesson_progress_model import LessonProgress
+from models.payment_model import Payment
 
 # Routes
 from routes.auth_route import router as auth_router
@@ -19,7 +21,10 @@ from routes.course_route import router as course_router
 from routes.module_route import router as module_router
 from routes.lesson_route import router as lesson_router
 from routes.enrollment_route import router as enrollment_router
+from routes.lesson_progress_route import router as progress_router
 from routes.admin_dashboard_route import router as admin_dashboard_router
+from routes.certificate_route import router as certificate_router
+from routes.payment_route import router as payment_router
 
 from middlewares.logging import log_requests
 from utils.exceptions import AppException
@@ -116,7 +121,25 @@ app.include_router(
 )
 
 app.include_router(
+    progress_router,
+    prefix="/api",
+    tags=["Progress"],
+)
+
+app.include_router(
     admin_dashboard_router,
     prefix="/api/admin",
     tags=["Admin Dashboard"],
+)
+
+app.include_router(
+    certificate_router,
+    prefix="/api",
+    tags=["Certificate"],
+)
+
+app.include_router(
+    payment_router,
+    prefix="/api",
+    tags=["Payments"],
 )
