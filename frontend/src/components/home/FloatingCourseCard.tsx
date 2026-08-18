@@ -18,7 +18,6 @@ interface Props {
     category?: string;
   };
 }
-
 const FloatingCourseCard = ({ course }: Props) => {
   const isFree = Number(course.price) === 0;
 
