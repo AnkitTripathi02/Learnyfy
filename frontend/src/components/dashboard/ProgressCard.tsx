@@ -27,7 +27,7 @@ const ProgressCard = () => {
 
             <div className="mt-8 grid grid-cols-3 gap-4">
 
-                <div className="rounded-xl bg-[#1b1a2b] p-4 text-center">
+                <div className="rounded-xl text-white p-4 text-center">
                     <h3 className="text-2xl font-bold text-white">
                         12
                     </h3>
@@ -37,7 +37,7 @@ const ProgressCard = () => {
                     </p>
                 </div>
 
-                <div className="rounded-xl bg-[#1b1a2b] p-4 text-center">
+                <div className="rounded-xl text-white p-4 text-center">
                     <h3 className="text-2xl font-bold text-white">
                         8
                     </h3>
@@ -47,7 +47,7 @@ const ProgressCard = () => {
                     </p>
                 </div>
 
-                <div className="rounded-xl bg-[#1b1a2b] p-4 text-center">
+                <div className="rounded-xl text-white p-4 text-center">
                     <h3 className="text-2xl font-bold text-white">
                         145
                     </h3>

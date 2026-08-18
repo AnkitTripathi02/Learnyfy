@@ -1,21 +1,25 @@
-import uuid
+import razorpay
+from config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
+
+client = razorpay.Client(
+    auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)
+)
 
 
 def create_razorpay_order(
     amount: float,
-    receipt: str
+    receipt: str,
 ):
-    amount_in_paise = int(round(amount * 100))
+    amount_in_paise = int(amount * 100)
 
-    order_id = f"order_dummy_{uuid.uuid4().hex[:12]}"
-
-    return {
-        "id": order_id,
+    order = client.order.create({
         "amount": amount_in_paise,
         "currency": "INR",
         "receipt": receipt,
-        "status": "created",
-    }
+        "payment_capture": 1
+    })
+
+    return order
 
 
 def verify_razorpay_payment(
@@ -23,16 +27,10 @@ def verify_razorpay_payment(
     razorpay_payment_id: str,
     razorpay_signature: str,
 ):
-    # Dummy payment verification
-    # Real Razorpay verification future mein add karenge.
-
-    if not razorpay_order_id:
-        raise ValueError("Order ID is required")
-
-    if not razorpay_payment_id:
-        raise ValueError("Payment ID is required")
-
-    if not razorpay_signature:
-        raise ValueError("Payment signature is required")
+    client.utility.verify_payment_signature({
+        "razorpay_order_id": razorpay_order_id,
+        "razorpay_payment_id": razorpay_payment_id,
+        "razorpay_signature": razorpay_signature,
+    })
 
     return True

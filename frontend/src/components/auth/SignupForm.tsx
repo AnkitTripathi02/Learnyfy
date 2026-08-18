@@ -12,7 +12,8 @@ import {
     FaUser,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 interface SignupFormProps {
     onLogin: () => void;
 }
@@ -28,6 +29,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
 
 
     const handleSignup = async () => {
@@ -36,27 +38,87 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailRegex.test(email)) {
-            setEmailError("Please enter a valid email address.");
-            return;
+await Swal.fire({
+  icon: "warning",
+  title: "Invalid Email",
+  text: "Please enter a valid email address.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#6366f1",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
+
+return;
         }
 
         if (!fullName || !email || !password || !confirmPassword) {
-            alert("Please fill all fields.");
-            return;
+await Swal.fire({
+  icon: "warning",
+  title: "Missing Information",
+  text: "Please fill all the required fields.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#6366f1",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
+
+return;
         }
 
         if (password !== confirmPassword) {
-            alert("Passwords do not match.");
-            return;
+await Swal.fire({
+  icon: "error",
+  title: "Password Mismatch",
+  text: "Password and Confirm Password must be the same.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#ef4444",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
+
+return;
         }
 
         if (!acceptTerms) {
-            alert("Please accept Terms & Conditions.");
-            return;
+await Swal.fire({
+  icon: "warning",
+  title: "Terms Required",
+  text: "Please accept the Terms & Conditions before continuing.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#6366f1",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
+
+return;
         }
 
         try {
             setLoading(true);
+            Swal.fire({
+  title: "Creating Account...",
+  text: "Please wait while we create your account.",
+  background: "#161122",
+  color: "#ffffff",
+  allowOutsideClick: false,
+  allowEscapeKey: false,
+  showConfirmButton: false,
+  didOpen: () => {
+    Swal.showLoading();
+  },
+});
 
             const response = await signup({
                 full_name: fullName,
@@ -64,48 +126,78 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 password,
             });
 
-            alert(response.message);
-            onLogin();
+Swal.close();
+
+await Swal.fire({
+  icon: "success",
+  title: "Account Created 🎉",
+  text: response.message || "Your account has been created successfully.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#6366f1",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
+
+onLogin();
 
         } catch (error: any) {
-            alert(
-                error.response?.data?.message ||
-                error.response?.data?.detail ||
-                "Signup Failed"
-            );
+Swal.close();
+
+await Swal.fire({
+  icon: "error",
+  title: "Signup Failed",
+  text:
+    error.response?.data?.message ||
+    error.response?.data?.detail ||
+    "Something went wrong. Please try again.",
+  background: "#161122",
+  color: "#ffffff",
+  confirmButtonColor: "#ef4444",
+  customClass: {
+    popup: "rounded-3xl",
+    confirmButton: "rounded-xl px-6 py-3",
+  },
+});
         } finally {
             setLoading(false);
         }
     };
 
-      const handleGoogleLogin = async () => {
+    const handleGoogleLogin = async () => {
         await Swal.fire({
-          icon: "info",
-          title: "Google Login Coming Soon 🚀",
-          text: "We're working on Google Sign-In. It will be available in the next update.",
-          background: "#161122",
-          color: "#ffffff",
-          confirmButtonText: "Got it",
-          confirmButtonColor: "#6366f1",
-          backdrop: `
+            icon: "info",
+            title: "Google Login Coming Soon 🚀",
+            text: "We're working on Google Sign-In. It will be available in the next update.",
+            background: "#161122",
+            color: "#ffffff",
+            confirmButtonText: "Got it",
+            confirmButtonColor: "#6366f1",
+            backdrop: `
           rgba(0,0,0,0.7)
           blur(8px)
         `,
-          customClass: {
-            popup: "rounded-3xl",
-            confirmButton: "rounded-xl px-6 py-3",
-          },
+            customClass: {
+                popup: "rounded-3xl",
+                confirmButton: "rounded-xl px-6 py-3",
+            },
         });
-      };
+    };
     return (
         <div className="flex h-full items-center justify-center p-10">
             <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#141222]/90 backdrop-blur-xl p-8 shadow-[0_0_60px_rgba(139,92,246,0.15)]">
+
                 {/* Logo */}
-                <div className="flex justify-end">
+                <div className="flex justify-between">
+
                     <div className="relative">
 
-                        <div className="w-10 h-7 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
-                            <FaBookOpen className="text-white text-md" />
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mb-4">
+                            <button onClick={() => navigate("/")}>
+                                <FaBookOpen className="text-white text-md" />
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -123,7 +215,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 <div className="mt-3">
                     <label className="text-gray-300">Full Name</label>
 
-                    <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-2 focus-within:border-purple-500 transition">
+                    <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-2 focus-within:border-purple-500 transition">
                         <FaUser className="text-gray-400" />
 
                         <input
@@ -140,7 +232,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 <div className="mt-3">
                     <label className="text-gray-300">Email</label>
 
-                    <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-2 focus-within:border-purple-500 transition">
+                    <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-2 focus-within:border-purple-500 transition">
                         <FaEnvelope className="text-gray-400" />
 
                         <input
@@ -166,7 +258,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 <div className="mt-3">
                     <label className="text-gray-300">Password</label>
 
-                    <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-2 focus-within:border-purple-500 transition">
+                    <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-2 focus-within:border-purple-500 transition">
                         <FaLock className="text-gray-400" />
 
                         <input
@@ -204,7 +296,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
                 <div className="mt-3">
                     <label className="text-gray-300">Confirm Password</label>
 
-                    <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-2 focus-within:border-purple-500 transition">
+                    <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-2 focus-within:border-purple-500 transition">
                         <FaLock className="text-gray-400" />
 
                         <input

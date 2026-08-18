@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
@@ -6,6 +8,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.user_model import User
 from config import SECRET_KEY, ALGORITHM
+
 
 security = HTTPBearer()
 
@@ -31,6 +34,14 @@ def get_current_user(
                 detail="Invalid token",
             )
 
+        try:
+            user_uuid = UUID(user_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid user ID",
+            )
+
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,7 +50,7 @@ def get_current_user(
 
     user = (
         db.query(User)
-        .filter(User.id == user_id)
+        .filter(User.id == user_uuid)
         .first()
     )
 

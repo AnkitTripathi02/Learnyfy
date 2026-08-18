@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 // import { getMyCourses } from "../../api/enrollmentApi";
 import { getMyCourses } from "../api/enrollmentApi";
 import { useNavigate } from "react-router-dom";
-
+import { useSearch } from "../context/SearchContext";
 
 
 
@@ -12,6 +12,15 @@ const MyCourses = () => {
 
     const [courses, setCourses] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { search } = useSearch();
+
+
+    const filteredCourses = courses.filter(
+        (course) =>
+            course.title
+                .toLowerCase()
+                .includes(search.toLowerCase())
+    );
 
 
     const loadCourses = async () => {
@@ -73,7 +82,7 @@ const MyCourses = () => {
 
     return (
 
-        <div className="min-h-screen bg-[#0b0914] p-8 text-white">
+        <div className="h-[830px] p-8 text-white">
 
 
             <h1 className="text-3xl font-bold mb-6">
@@ -83,7 +92,7 @@ const MyCourses = () => {
 
 
             {
-                courses.length === 0 ?
+                filteredCourses.length === 0 ?
 
                     (
                         <p className="text-gray-400">
@@ -95,11 +104,11 @@ const MyCourses = () => {
 
                     (
 
-                        <div className="grid md:grid-cols-3 gap-6">
+                        <div className="grid md:grid-cols-3 gap-6 overflow-y">
 
 
                             {
-                                courses.map((course) => (
+                                filteredCourses.map((course) => (
 
                                     <div
                                         key={course.id}

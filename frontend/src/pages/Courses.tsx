@@ -181,7 +181,7 @@ const Courses = () => {
                 ? "grid-cols-1 max-w-md mx-auto"
                 : filteredCourses.length === 2
                 ? "md:grid-cols-2 max-w-3xl mx-auto"
-                : "md:grid-cols-2 lg:grid-cols-3"
+                : "md:grid-cols-2 lg:grid-cols-3 "
         }
     `}
 >

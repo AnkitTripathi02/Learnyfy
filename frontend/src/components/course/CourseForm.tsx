@@ -5,6 +5,7 @@ import {
     createCourse,
     updateCourse,
 } from "../../api/courseApi";
+import Swal from "sweetalert2";
 
 import {
     courseSchema,
@@ -24,88 +25,164 @@ const CourseForm = ({
     onSuccess,
 }: CourseFormProps) => {
 
-const form = useForm<CourseFormData>({
-    resolver: zodResolver(courseSchema),
-    defaultValues: {
-        title: "",
-        slug: "",
-        short_description: "",
-        description: "",
-        category: "",
-        level: "",
-        language: "English",
-        duration: "",
-        instructor: "",
-        price: 0,
-        thumbnail: "",
-        is_published: false,
-    },
-});
+    const form = useForm<CourseFormData>({
+        resolver: zodResolver(courseSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            short_description: "",
+            description: "",
+            category: "",
+            level: "",
+            language: "English",
+            duration: "",
+            instructor: "",
+            price: 0,
+            thumbnail: "",
+            is_published: false,
+        },
+    });
 
-const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-} = form;
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = form;
 
     useEffect(() => {
 
-    if (initialData) {
-
-        reset({
-
-            title: initialData.title,
-            slug: initialData.slug,
-            short_description: initialData.short_description,
-            description: initialData.description,
-            category: initialData.category,
-            level: initialData.level,
-            language: initialData.language,
-            duration: initialData.duration,
-            instructor: initialData.instructor,
-            price: Number(initialData.price),
-            thumbnail: initialData.thumbnail,
-            is_published: initialData.is_published,
-
-        });
-
-    }
-
-}, [initialData, reset]);
-
-const onSubmit = async (data: CourseFormData) => {
-
-    try {
-
         if (initialData) {
 
-            await updateCourse(
-                initialData.id,
-                data
-            );
+            reset({
 
-            alert("Course Updated Successfully");
+                title: initialData.title,
+                slug: initialData.slug,
+                short_description: initialData.short_description,
+                description: initialData.description,
+                category: initialData.category,
+                level: initialData.level,
+                language: initialData.language,
+                duration: initialData.duration,
+                instructor: initialData.instructor,
+                price: Number(initialData.price),
+                thumbnail: initialData.thumbnail,
+                is_published: initialData.is_published,
 
-        } else {
-
-            await createCourse(data);
-
-            alert("Course Created Successfully");
+            });
 
         }
 
-        onSuccess?.();
+    }, [initialData, reset]);
 
-    } catch (error) {
+    // const onSubmit = async (data: CourseFormData) => {
 
-        console.error(error);
+    //     try {
 
-        alert("Something went wrong");
+    //         if (initialData) {
 
-    }
+    //             await updateCourse(
+    //                 initialData.id,
+    //                 data
+    //             );
 
-};
+    //             alert("Course Updated Successfully");
+
+    //         } else {
+
+    //             await createCourse(data);
+
+    //             alert("Course Created Successfully");
+
+    //         }
+
+    //         onSuccess?.();
+
+    //     } catch (error) {
+
+    //         console.error(error);
+
+    //         alert("Something went wrong");
+
+    //     }
+
+    // };
+
+    const onSubmit = async (data: CourseFormData) => {
+        try {
+            // Loading Popup
+            Swal.fire({
+                title: initialData ? "Updating Course..." : "Creating Course...",
+                text: "Please wait...",
+                background: "#161122",
+                color: "#ffffff",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            if (initialData) {
+                await updateCourse(initialData.id, data);
+
+                Swal.close();
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Course Updated 🎉",
+                    text: "Course updated successfully.",
+                    background: "#161122",
+                    color: "#ffffff",
+                    confirmButtonColor: "#7c3aed",
+                    customClass: {
+                        popup: "rounded-3xl",
+                        confirmButton: "rounded-xl px-6 py-3",
+                    },
+                });
+            } else {
+                await createCourse(data);
+
+                Swal.close();
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Course Created 🎉",
+                    text: "New course created successfully.",
+                    background: "#161122",
+                    color: "#ffffff",
+                    confirmButtonColor: "#7c3aed",
+                    customClass: {
+                        popup: "rounded-3xl",
+                        confirmButton: "rounded-xl px-6 py-3",
+                    },
+                });
+            }
+
+            onSuccess?.();
+        } catch (error: any) {
+            Swal.close();
+
+            Swal.fire({
+                icon: "error",
+                title: "Operation Failed",
+                text:
+                    error?.response?.data?.detail ||
+                    error?.response?.data?.message ||
+                    "Something went wrong.",
+                background: "#161122",
+                color: "#ffffff",
+                confirmButtonColor: "#ef4444",
+                customClass: {
+                    popup: "rounded-3xl",
+                    confirmButton: "rounded-xl px-6 py-3",
+                },
+            });
+
+            console.error(error);
+        }
+    };
 
     return (
 
@@ -151,7 +228,7 @@ const onSubmit = async (data: CourseFormData) => {
                         type="text"
                         placeholder="react-masterclass"
                         {...register("slug")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.slug && (
@@ -180,7 +257,7 @@ const onSubmit = async (data: CourseFormData) => {
                         type="text"
                         placeholder="Web Development"
                         {...register("category")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.category && (
@@ -203,7 +280,7 @@ const onSubmit = async (data: CourseFormData) => {
                         type="text"
                         placeholder="Beginner"
                         {...register("level")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.level && (
@@ -232,7 +309,7 @@ const onSubmit = async (data: CourseFormData) => {
                         type="text"
                         placeholder="John Doe"
                         {...register("instructor")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.instructor && (
@@ -254,7 +331,7 @@ const onSubmit = async (data: CourseFormData) => {
                     <input
                         type="text"
                         {...register("language")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.language && (
@@ -283,7 +360,7 @@ const onSubmit = async (data: CourseFormData) => {
                         type="text"
                         placeholder="20 Hours"
                         {...register("duration")}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.duration && (
@@ -304,10 +381,10 @@ const onSubmit = async (data: CourseFormData) => {
 
                     <input
                         type="number"
-                            {...register("price", {
-        valueAsNumber: true,
-    })}
-                       className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        {...register("price", {
+                            valueAsNumber: true,
+                        })}
+                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.price && (
@@ -322,7 +399,7 @@ const onSubmit = async (data: CourseFormData) => {
 
             </div>
 
-                        {/* Thumbnail */}
+            {/* Thumbnail */}
 
             <div>
 
@@ -334,7 +411,7 @@ const onSubmit = async (data: CourseFormData) => {
                     type="text"
                     placeholder="https://example.com/image.png"
                     {...register("thumbnail")}
-                   className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                    className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                 />
 
             </div>
@@ -411,7 +488,29 @@ const onSubmit = async (data: CourseFormData) => {
 
                 <button
                     type="button"
-                    onClick={() => onSuccess?.()}
+                    onClick={async () => {
+                        const result = await Swal.fire({
+                            title: "Discard Changes?",
+                            text: "Unsaved changes will be lost.",
+                            icon: "warning",
+                            background: "#161122",
+                            color: "#ffffff",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Close",
+                            cancelButtonText: "Continue Editing",
+                            confirmButtonColor: "#ef4444",
+                            cancelButtonColor: "#7c3aed",
+                            customClass: {
+                                popup: "rounded-3xl",
+                                confirmButton: "rounded-xl px-6 py-3",
+                                cancelButton: "rounded-xl px-6 py-3",
+                            },
+                        });
+
+                        if (result.isConfirmed) {
+                            onSuccess?.();
+                        }
+                    }}
                     className="rounded-xl border border-[#2A2540] px-6 py-3 text-gray-300 transition hover:bg-[#211B38]"
                 >
                     Cancel
@@ -421,7 +520,7 @@ const onSubmit = async (data: CourseFormData) => {
                     type="submit"
                     className="rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3 font-semibold text-white transition hover:scale-105"
                 >
-                   {initialData ? "Update Course" : "Save Course"}
+                    {initialData ? "Update Course" : "Save Course"}
                 </button>
 
             </div>

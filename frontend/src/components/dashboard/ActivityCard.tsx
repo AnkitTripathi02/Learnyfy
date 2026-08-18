@@ -36,7 +36,7 @@ const ActivityCard = () => {
                 {activities.map((item, index) => (
                     <div
                         key={index}
-                        className="flex items-center gap-4 rounded-xl bg-[#1b1a2b] p-4"
+                        className="flex items-center gap-4 rounded-xl text-white p-4"
                     >
 
                         <div className="rounded-lg bg-purple-600 p-3 text-white">

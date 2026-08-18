@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Numeric, DateTime
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
 
@@ -9,8 +10,17 @@ class Payment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, nullable=False)
-    course_id = Column(String, nullable=False)
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("mst_users.id"),
+        nullable=False
+    )
+
+    course_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("courses.id"),
+        nullable=False
+    )
 
     razorpay_order_id = Column(String, unique=True, nullable=False)
     razorpay_payment_id = Column(String, unique=True, nullable=True)

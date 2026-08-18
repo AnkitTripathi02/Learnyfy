@@ -1,7 +1,7 @@
 import Navbar from "../components/home/Navbar";
 import Hero from "../components/home/Hero";
 import Categories from "../components/home/Categories";
-import FeaturedCourses from "../components/home/FeaturedCourses";
+import FloatingCourses from "../components/home/FloatingCourses";
 import WhyChooseUs from "../components/home/WhyChooseUs";
 import Testimonials from "../components/home/Testimonials";
 import ContactForm from "../components/home/ContactForm";
@@ -13,37 +13,44 @@ const Home = () => {
     <>
       <Navbar />
 
-<main className="pt-16">
+      <main className="pt-16">
 
-  <section id="home">
-    <Hero />
-  </section>
+        {/* Hero */}
+        <section id="home">
+          <Hero />
+        </section>
 
-  <section id="categories">
-    <Categories />
-  </section>
+        {/* Categories */}
+        <section id="categories">
+          <Categories />
+        </section>
 
-  <section id="courses">
-    <FeaturedCourses />
-  </section>
+        {/* Floating Courses */}
+        <section id="courses">
+          <FloatingCourses />
+        </section>
 
-  {/* About */}
-  <section id="about" className="scroll-mt-24 space-y-10">
-    <WhyChooseUs />
-    <Testimonials />
-  </section>
+        {/* About */}
+        <section
+          id="about"
+          className="scroll-mt-24 space-y-10"
+        >
+          <WhyChooseUs />
+          <Testimonials />
+        </section>
 
-  {/* Contact */}
-  <section id="contact" className="scroll-mt-24">
-    <ContactForm />
-  </section>
+        {/* Contact */}
+        <section
+          id="contact"
+          className="scroll-mt-24"
+        >
+          <ContactForm />
+        </section>
 
-</main>
+      </main>
 
-<ScrollToTop />
-<Footer />
-
-
+      <ScrollToTop />
+      <Footer />
     </>
   );
 };

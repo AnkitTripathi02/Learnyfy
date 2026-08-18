@@ -6,10 +6,11 @@ import {
   FaEyeSlash,
   FaBookOpen,
 } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { login } from "../../api/authApi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface LoginFormProps {
   onSignup: () => void;
@@ -20,6 +21,16 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // useEffect(() => {
+  //   const savedEmail = localStorage.getItem("rememberEmail");
+
+  //   if (savedEmail) {
+  //     setEmail(savedEmail);
+  //     setRememberMe(true);
+  //   }
+  // }, []);
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -91,73 +102,98 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
       return;
     }
 
-    try {
-      setLoading(true);
+try {
+  setLoading(true);
 
-      // Loading Popup
-      Swal.fire({
-        title: "Signing In...",
-        text: "Please wait while we verify your credentials.",
-        background: "#161122",
-        color: "#ffffff",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+  Swal.fire({
+    title: "Signing In...",
+    text: "Please wait while we verify your credentials.",
+    background: "#161122",
+    color: "#ffffff",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
-      const response = await login({
-        email,
-        password,
-      });
+  const response = await login({
+    email,
+    password,
+  });
 
-      localStorage.setItem(
-        "token",
-        response.data.access_token
-      );
+  // Save Token
+  localStorage.setItem(
+    "token",
+    response.data.access_token
+  );
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
+  // Save User
+  localStorage.setItem(
+    "user",
+    JSON.stringify(response.data.user)
+  );
 
-      Swal.close();
+  // Remember Email
+  if (rememberMe) {
+    localStorage.setItem("rememberEmail", email);
+  } else {
+    localStorage.removeItem("rememberEmail");
+  }
 
-      await Swal.fire({
-        icon: "success",
-        title: "Login Successful 🎉",
-        text: `Welcome back, ${response.data.user.full_name}!`,
-        background: "#161122",
-        color: "#ffffff",
-        confirmButtonColor: "#6366f1",
-        customClass: {
-          popup: "rounded-3xl",
-          confirmButton: "rounded-xl px-6 py-3",
-        },
-      });
+  // Close Loading
+  Swal.close();
 
-      navigate("/dashboard");
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text:
-          error?.response?.data?.message ||
-          error?.response?.data?.detail ||
-          "Invalid email or password.",
-        background: "#161122",
-        color: "#ffffff",
-        confirmButtonColor: "#ef4444",
-        customClass: {
-          popup: "rounded-3xl",
-          confirmButton: "rounded-xl px-6 py-3",
-        },
-      });
-    } finally {
-      setLoading(false);
-    }
+  await Swal.fire({
+    icon: "success",
+    title: "Login Successful 🎉",
+    text: `Welcome back, ${response.data.user.full_name}!`,
+    background: "#161122",
+    color: "#ffffff",
+    confirmButtonColor: "#6366f1",
+    customClass: {
+      popup: "rounded-3xl",
+      confirmButton: "rounded-xl px-6 py-3",
+    },
+  });
+
+  // ===== RESET FORM =====
+  setEmail("");
+  setPassword("");
+  setPasswordError("");
+  setShowPassword(false);
+
+  if (!rememberMe) {
+    setRememberMe(false);
+  }
+
+  // ===== REDIRECT =====
+  if (response.data.user.role === "admin") {
+    navigate("/admin/dashboard");
+  } else {
+    navigate("/dashboard");
+  }
+
+} catch (error: any) {
+  Swal.fire({
+    icon: "error",
+    title: "Login Failed",
+    text:
+      error?.response?.data?.message ||
+      error?.response?.data?.detail ||
+      "Invalid email or password.",
+    background: "#161122",
+    color: "#ffffff",
+    confirmButtonColor: "#ef4444",
+    customClass: {
+      popup: "rounded-3xl",
+      confirmButton: "rounded-xl px-6 py-3",
+    },
+  });
+} finally {
+  setLoading(false);
+}
   };
 
   const handleGoogleLogin = async () => {
@@ -183,14 +219,18 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
   return (
     <div className="flex items-center justify-center p-10">
       <div className="w-full max-w-xl rounded-xl border border-white/10 bg-[#141222]/90 backdrop-blur-xl p-10 shadow-[0_0_60px_rgba(139,92,246,0.15)]">
+
         {/* Logo */}
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-between mb-6">
           <div className="relative">
-            <div className="absolute inset-0 rounded-full border border-purple-500/20 scale-125"></div>
-            <div className="absolute inset-0 rounded-full border border-purple-500/10 scale-150"></div>
+            {/* <div className="absolute inset-0 rounded-full border border-purple-500/20 scale-125"></div>
+            <div className="absolute inset-0 rounded-full border border-purple-500/10 scale-150"></div> */}
 
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center">
-              <FaBookOpen className="text-white text-xl" />
+              <button onClick={() => navigate("/")}>
+                <FaBookOpen className="text-white text-md" />
+              </button>
+
             </div>
           </div>
         </div>
@@ -210,7 +250,7 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
             Email
           </label>
 
-          <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-4 focus-within:border-purple-500 transition-all">
+          <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-4 focus-within:border-purple-500 transition-all">
             <FaEnvelope className="text-gray-400" />
 
             {/* <input
@@ -220,14 +260,15 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
               placeholder="Enter your email"
               className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500"
             /> */}
-            <input
-              type="email"
-              autoComplete="off"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500"
-              placeholder="Enter your email"
-            />
+          <input
+  type="email"
+  name="login_email"
+  autoComplete="off"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  placeholder="Enter your email"
+  className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500"
+/>
           </div>
         </div>
 
@@ -237,31 +278,23 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
             Password
           </label>
 
-          <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-[#1b1a2b] px-4 focus-within:border-purple-500 transition-all">
+          <div className="mt-2 flex items-center rounded-xl border border-white/10 text-white px-4 focus-within:border-purple-500 transition-all">
             <FaLock className="text-gray-400" />
 
-            <input
-              type={showPassword ? "text" : "password"}
-              autoComplete="new-password"
-              value={password}
-              maxLength={20}
-              className="
-              w-full
-              bg-transparent
-              p-4
-              text-white
-              outline-none
-              placeholder:text-gray-500
-              autofill:bg-transparent
-              [-webkit-text-fill-color:white]
-              [-webkit-box-shadow:0_0_0px_1000px_#1b1a2b_inset]
-            "
-              onChange={(e) => {
-                const value = e.target.value;
-                setPassword(value);
-                validatePassword(value);
-              }}
-            />
+<input
+  type={showPassword ? "text" : "password"}
+  name="login_password"
+  placeholder="Enter Password"
+  autoComplete="new-password"
+  value={password}
+  maxLength={20}
+  onChange={(e) => {
+    const value = e.target.value;
+    setPassword(value);
+    validatePassword(value);
+  }}
+  className="w-full bg-transparent p-4 text-white outline-none placeholder:text-gray-500 caret-purple-500"
+/>
 
             <button
               type="button"
@@ -287,7 +320,9 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <input
               type="checkbox"
-              className="accent-purple-600"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="accent-purple-500"
             />
 
             Remember me
@@ -306,7 +341,12 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
           //   }
           // }}
           onClick={handleLogin}
-          className="mt-8 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.02]"
+          className={`mt-8 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-4 text-lg font-semibold text-white transition-all duration-300
+${
+  loading
+    ? "opacity-70 cursor-not-allowed"
+    : "hover:scale-[1.02]"
+}`}
         >
           {loading ? "Logging in..." : "Log In →"}
         </button> */}
@@ -314,7 +354,11 @@ const LoginForm = ({ onSignup }: LoginFormProps) => {
         <button
           onClick={handleLogin}
           disabled={loading}
-          className="mt-8 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-[1.02]"
+          className={`mt-8 w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-4 text-lg font-semibold text-white transition-all duration-300
+${loading
+              ? "opacity-70 cursor-not-allowed"
+              : "hover:scale-[1.02]"
+            }`}
         >
           {loading ? "Logging in..." : "Log In →"}
         </button>

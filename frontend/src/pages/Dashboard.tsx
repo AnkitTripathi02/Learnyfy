@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfile } from "../api/profileApi";
-import Sidebar from "../components/dashboard/Sidebar";
-import Navbar from "../components/dashboard/Navbar";
+import { getMyProfile } from "../api/profileApi";
 import DashboardCard from "../components/dashboard/DashboardCard";
 import ProgressCard from "../components/dashboard/ProgressCard";
 import ActivityCard from "../components/dashboard/ActivityCard";
@@ -32,7 +30,7 @@ const Dashboard = () => {
 
     const verifyUser = async () => {
         try {
-            await getProfile();
+            await getMyProfile();
         } catch (error) {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
@@ -63,71 +61,59 @@ const Dashboard = () => {
     //     navigate("/login", { replace: true });
     // };
 
-    return (
-        <div className="flex min-h-screen bg-[#090817]">
+return (
+    <div className="p-8">
 
-            <Sidebar />
+        <h1 className="text-4xl font-bold text-white">
+            Welcome {user.full_name} 👋
+        </h1>
 
-            <div className="flex flex-1 flex-col">
+        <p className="mt-2 text-gray-400">
+            Keep learning and improve your skills.
+        </p>
 
-                <Navbar />
+        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
-                <div className="p-8">
+            <DashboardCard
+                title="Total Courses"
+                value={stats.total_courses.toString()}
+                icon={<FaBookOpen />}
+            />
 
-                    <h1 className="text-4xl font-bold text-white">
-                        Welcome {user.full_name} 👋
-                    </h1>
+            <DashboardCard
+                title="Completed"
+                value={stats.completed_courses.toString()}
+                icon={<FaCheckCircle />}
+            />
 
-                    <p className="mt-2 text-gray-400">
-                        Keep learning and improve your skills.
-                    </p>
+            <DashboardCard
+                title="Practice"
+                value={stats.practice_count.toString()}
+                icon={<FaClipboardCheck />}
+            />
 
-                    <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <DashboardCard
+                title="Rank"
+                value={`#${stats.rank}`}
+                icon={<FaTrophy />}
+            />
 
-                        <DashboardCard
-                            title="Total Courses"
-                            value={stats.total_courses.toString()}
-                            icon={<FaBookOpen />}
-                        />
+        </div>
 
-                        <DashboardCard
-                            title="Completed"
-                            value={stats.completed_courses.toString()}
-                            icon={<FaCheckCircle />}
-                        />
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
 
-                        <DashboardCard
-                            title="Practice"
-                            value={stats.practice_count.toString()}
-                            icon={<FaClipboardCheck />}
-                        />
+            <div className="lg:col-span-2">
+                <ProgressCard />
+            </div>
 
-                        <DashboardCard
-                            title="Rank"
-                            value={`#${stats.rank}`}
-                            icon={<FaTrophy />}
-                        />
-
-                    </div>
-
-                    <div className="mt-8 grid gap-6 lg:grid-cols-3">
-
-                        <div className="lg:col-span-2">
-                            <ProgressCard />
-                        </div>
-
-                        <div>
-                            <ActivityCard />
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div>
+                <ActivityCard />
             </div>
 
         </div>
-    );
+
+    </div>
+);
 };
 
 export default Dashboard;
