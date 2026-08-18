@@ -6,11 +6,10 @@ import {
   FaEyeSlash,
   FaBookOpen,
 } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { login } from "../../api/authApi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { FaArrowLeft } from "react-icons/fa";
 
 interface LoginFormProps {
   onSignup: () => void;

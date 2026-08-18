@@ -12,7 +12,6 @@ import {
     FaUser,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 interface SignupFormProps {
     onLogin: () => void;

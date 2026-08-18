@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getCourses, deleteCourse } from "../../../api/courseApi";
-import { useNavigate } from "react-router-dom";
 import CourseTable from "../../../components/course/CourseTable";
 import CourseModal from "../../../components/course/CourseModal";
 import CourseForm from "../../../components/course/CourseForm";
@@ -10,11 +9,9 @@ import {
     FaCheckCircle,
     FaClock,
     FaRupeeSign,
-    FaArrowLeft,
 } from "react-icons/fa";
 
 const CourseManagement = () => {
-    const navigate = useNavigate();
 
     const [courses, setCourses] = useState<any[]>([]);
     const [openModal, setOpenModal] = useState(false);

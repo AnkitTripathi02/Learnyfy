@@ -15,7 +15,6 @@ import {
     FaCloud,
     FaArrowUp,
     FaArrowRight,
-    FaCheckCircle,
 } from "react-icons/fa";
 
 import {

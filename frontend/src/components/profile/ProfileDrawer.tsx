@@ -3,7 +3,6 @@ import {
   FaUser,
   FaCog,
   FaLock,
-  FaBookOpen,
   FaSignOutAlt,
   FaBell,
   FaChevronRight,

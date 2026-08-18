@@ -9,7 +9,6 @@ import {
     FaChartLine,
     FaGraduationCap,
     FaMoneyBillWave,
-    FaPercentage,
 } from "react-icons/fa";
 
 import {
