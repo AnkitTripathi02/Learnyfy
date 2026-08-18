@@ -526,7 +526,6 @@ const AdminAnalytics = () => {
                                 data={
                                     monthly_enrollments
                                 }
-                                cursor={false}
                             >
 
                                 <CartesianGrid

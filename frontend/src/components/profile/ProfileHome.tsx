@@ -18,7 +18,6 @@ interface Props {
 const ProfileHome = ({
   user,
   initials,
-  onNavigate,
 }: Props) => {
   return (
     <div className="space-y-6">
