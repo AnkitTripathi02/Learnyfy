@@ -12,7 +12,6 @@ import Footer from "../components/home/Footer";
 const CourseCompleted = () => {
 
     const navigate = useNavigate();
-    const { id } = useParams();
 
     return (
         <>

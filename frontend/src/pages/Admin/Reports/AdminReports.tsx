@@ -131,42 +131,42 @@ const AdminReports = () => {
         );
     }, [data]);
 
-    const growthData = useMemo(() => {
-        if (!data) return [];
+    // const growthData = useMemo(() => {
+    //     if (!data) return [];
 
-        const users =
-            data.monthly_users || [];
+    //     const users =
+    //         data.monthly_users || [];
 
-        const enrollments =
-            data.monthly_enrollments || [];
+    //     const enrollments =
+    //         data.monthly_enrollments || [];
 
-        const months = new Set([
-            ...users.map(
-                (item) => item.month
-            ),
-            ...enrollments.map(
-                (item) => item.month
-            ),
-        ]);
+    //     const months = new Set([
+    //         ...users.map(
+    //             (item) => item.month
+    //         ),
+    //         ...enrollments.map(
+    //             (item) => item.month
+    //         ),
+    //     ]);
 
-        return Array.from(months).map(
-            (month) => ({
-                month,
-                users:
-                    users.find(
-                        (item) =>
-                            item.month ===
-                            month
-                    )?.users || 0,
-                enrollments:
-                    enrollments.find(
-                        (item) =>
-                            item.month ===
-                            month
-                    )?.enrollments || 0,
-            })
-        );
-    }, [data]);
+    //     return Array.from(months).map(
+    //         (month) => ({
+    //             month,
+    //             users:
+    //                 users.find(
+    //                     (item) =>
+    //                         item.month ===
+    //                         month
+    //                 )?.users || 0,
+    //             enrollments:
+    //                 enrollments.find(
+    //                     (item) =>
+    //                         item.month ===
+    //                         month
+    //                 )?.enrollments || 0,
+    //         })
+    //     );
+    // }, [data]);
 
     const filteredCourses = useMemo(() => {
         if (!data) return [];
