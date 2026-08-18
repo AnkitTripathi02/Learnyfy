@@ -25,7 +25,8 @@
     "react-youtube": "^10.1.0",
     "sweetalert2": "^11.26.25",
     "zod": "^4.4.3",
-    "framer-motion": "10.7.0"
+    "framer-motion": "10.7.0",
+    "recharts": "10.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

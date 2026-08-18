@@ -1,8 +1,4 @@
 import {
-  FaUser,
-  FaShieldAlt,
-  FaCog,
-  FaBell,
   FaBookOpen,
   FaGraduationCap,
 } from "react-icons/fa";
