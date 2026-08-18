@@ -20,7 +20,6 @@ interface SidebarProps {
 
 const Sidebar = ({
   collapsed,
-  setCollapsed,
 }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();

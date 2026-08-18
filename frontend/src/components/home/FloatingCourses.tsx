@@ -15,7 +15,6 @@ const FloatingCourses = () => {
     const [showArrows, setShowArrows] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
-    const animationRef = useRef<number>();
     const pauseRef = useRef(false);
 
     useEffect(() => {
