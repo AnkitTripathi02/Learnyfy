@@ -39,6 +39,7 @@ const CourseForm = ({
             instructor: "",
             price: 0,
             thumbnail: "",
+            access_duration_days: 30,
             is_published: false,
         },
     });
@@ -55,7 +56,6 @@ const CourseForm = ({
         if (initialData) {
 
             reset({
-
                 title: initialData.title,
                 slug: initialData.slug,
                 short_description: initialData.short_description,
@@ -67,8 +67,8 @@ const CourseForm = ({
                 instructor: initialData.instructor,
                 price: Number(initialData.price),
                 thumbnail: initialData.thumbnail,
+                access_duration_days: Number(initialData.access_duration_days),
                 is_published: initialData.is_published,
-
             });
 
         }
@@ -348,7 +348,7 @@ const CourseForm = ({
 
             {/* Row 4 */}
 
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-3 gap-5">
 
                 <div>
 
@@ -374,6 +374,34 @@ const CourseForm = ({
                 </div>
 
                 <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-300">
+                        Access Duration
+                    </label>
+
+                    <div className="relative">
+                        <input
+                            type="number"
+                            min={1}
+                            placeholder="30"
+                            {...register("access_duration_days", {
+                                valueAsNumber: true,
+                            })}
+                            className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 pr-16 text-white outline-none focus:border-purple-500"
+                        />
+
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                            Days
+                        </span>
+                    </div>
+
+                    {errors.access_duration_days && (
+                        <p className="mt-1 text-sm text-red-400">
+                            {errors.access_duration_days.message}
+                        </p>
+                    )}
+                </div>
+
+                <div>
 
                     <label className="mb-2 block text-sm font-medium text-gray-300">
                         Price
@@ -384,7 +412,7 @@ const CourseForm = ({
                         {...register("price", {
                             valueAsNumber: true,
                         })}
-                        className="w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
+                        className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none w-full rounded-xl border border-[#2A2540] bg-[#211B38] p-2 text-white outline-none focus:border-purple-500"
                     />
 
                     {errors.price && (

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
 import Dashboard from "./pages/Dashboard";
 import MyCourses from "./pages/MyCourses";
@@ -121,6 +122,16 @@ function App() {
     element={<AdminReports />}
 />
 </Route>
+
+
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  }
+/>
 
 
 

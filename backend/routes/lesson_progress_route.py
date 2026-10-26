@@ -13,12 +13,30 @@ from schemas.lesson_progress_schema import (
 
 from services.lesson_progress_service import (
     mark_lesson_completed,
+    mark_lesson_accessed,
     get_course_progress,
 )
 
 
 router = APIRouter()
 
+@router.post(
+    "/courses/{course_id}/lessons/{lesson_id}/access",
+    response_model=LessonProgressResponse,
+)
+def access_lesson(
+    course_id: UUID,
+    lesson_id: UUID,
+    data: LessonProgressCreate,
+    db: Session = Depends(get_db),
+):
+
+    return mark_lesson_accessed(
+        db=db,
+        user_id=data.user_id,
+        course_id=course_id,
+        lesson_id=lesson_id,
+    )
 
 @router.post(
     "/courses/{course_id}/lessons/{lesson_id}/complete",

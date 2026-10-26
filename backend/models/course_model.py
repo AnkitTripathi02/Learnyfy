@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, Boolean, DateTime, Numeric
+from sqlalchemy import Column, String, Text, Boolean, DateTime, Numeric, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from database import Base
 import uuid
@@ -63,6 +63,11 @@ class Course(Base):
     price = Column(
         Numeric(10,2),
         default=0,
+    )
+
+    access_duration_days = Column(
+        Integer,
+        nullable=True,
     )
 
     instructor = Column(

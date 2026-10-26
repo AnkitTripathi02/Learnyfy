@@ -261,7 +261,7 @@ const Navbar = ({
             SEARCH
         ====================================== */}
 
-        <div className="relative hidden w-96 lg:block">
+        {/* <div className="relative hidden w-96 lg:block">
 
           <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
 
@@ -288,7 +288,7 @@ const Navbar = ({
             "
           />
 
-        </div>
+        </div> */}
 
         {/* ======================================
             RIGHT

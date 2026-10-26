@@ -14,6 +14,7 @@ class EnrollmentResponse(BaseModel):
     user_id: UUID
     course_id: UUID
     isactive: bool
+    expires_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
 
@@ -28,9 +29,14 @@ class MyCourseResponse(BaseModel):
     title: str
     description: Optional[str] = None
     thumbnail: Optional[str] = None
+
     progress: int = 0
     is_completed: bool = False
+
     enrolled_at: datetime
+    expires_at: Optional[datetime] = None
+    days_remaining: Optional[int] = None
+    access_status: str
 
     class Config:
         from_attributes = True

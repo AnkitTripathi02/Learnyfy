@@ -39,7 +39,9 @@ def login_user(
     email: str,
     password: str,
 ):
-
+    # ==============================
+    # CHECK USER EXISTS
+    # ==============================
     user = (
         db.query(User)
         .filter(User.email == email)
@@ -48,10 +50,13 @@ def login_user(
 
     if not user:
         raise AppException(
-            message="Invalid email or password.",
-            status_code=401,
+            message="Account not found. Please sign up first.",
+            status_code=404,
         )
 
+    # ==============================
+    # CHECK PASSWORD
+    # ==============================
     if not verify_password(
         password,
         user.password,
@@ -61,6 +66,9 @@ def login_user(
             status_code=401,
         )
 
+    # ==============================
+    # CREATE ACCESS TOKEN
+    # ==============================
     access_token = create_access_token(
         {
             "sub": str(user.id),
@@ -69,16 +77,19 @@ def login_user(
         }
     )
 
+    # ==============================
+    # LOGIN RESPONSE
+    # ==============================
     return {
-    "access_token": access_token,
-    "token_type": "bearer",
-    "user": {
-        "id": str(user.id),
-        "full_name": user.full_name,
-        "email": user.email,
-        "role": user.role,
-        "profile_image": user.profile_image,
-        "is_email_verified": user.is_email_verified,
-        "is_active": user.is_active,
-    },
-}
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(user.id),
+            "full_name": user.full_name,
+            "email": user.email,
+            "role": user.role,
+            "profile_image": user.profile_image,
+            "is_email_verified": user.is_email_verified,
+            "is_active": user.is_active,
+        },
+    }

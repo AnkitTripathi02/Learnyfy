@@ -7,6 +7,11 @@ import {
   FaCreditCard,
   FaChartLine,
   FaFileInvoice,
+  FaSearch,
+  FaPlayCircle,
+  FaTrophy,
+  FaUser,
+  FaCog,
 } from "react-icons/fa";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -92,51 +97,121 @@ const Sidebar = ({
     }
   };
 
+  // =========================
+  // MENU ITEMS
+  // =========================
+
   const menuItems = isAdmin
-  ? [
-      {
-        icon: <FaHome />,
-        title: "Dashboard",
-        path: "/admin/dashboard",
-      },
-      {
-        icon: <FaGraduationCap />,
-        title: "Course Management",
-        path: "/admin/courses",
-      },
-      {
-        icon: <FaUserGraduate />,
-        title: "Students",
-        path: "/admin/students",
-      },
-      {
-        icon: <FaCreditCard />,
-        title: "Payments",
-        path: "/admin/payments",
-      },
-      {
-        icon: <FaChartLine />,
-        title: "Analytics",
-        path: "/admin/analytics",
-      },
-      {
-        icon: <FaFileInvoice />,
-        title: "Reports",
-        path: "/admin/reports",
-      },
-    ]
+    ? [
+        {
+          section: "MAIN",
+          items: [
+            {
+              icon: <FaHome />,
+              title: "Dashboard",
+              path: "/admin/dashboard",
+            },
+            {
+              icon: <FaGraduationCap />,
+              title: "Course Management",
+              path: "/admin/courses",
+            },
+            {
+              icon: <FaUserGraduate />,
+              title: "Students",
+              path: "/admin/students",
+            },
+            {
+              icon: <FaCreditCard />,
+              title: "Payments",
+              path: "/admin/payments",
+            },
+            {
+              icon: <FaChartLine />,
+              title: "Analytics",
+              path: "/admin/analytics",
+            },
+            {
+              icon: <FaFileInvoice />,
+              title: "Reports",
+              path: "/admin/reports",
+            },
+          ],
+        },
+      ]
     : [
         {
-          icon: <FaHome />,
-          title: "Dashboard",
-          path: "/dashboard",
+          section: "MAIN",
+          items: [
+            {
+              icon: <FaHome />,
+              title: "Dashboard",
+              path: "/dashboard",
+            },
+            {
+              icon: <FaGraduationCap />,
+              title: "My Courses",
+              path: "/dashboard/my-courses",
+            },
+            {
+              icon: <FaSearch />,
+              title: "Explore Courses",
+              path: "/courses",
+            },
+          ],
         },
+
         {
-          icon: <FaGraduationCap />,
-          title: "My Courses",
-          path: "/dashboard/my-courses",
+          section: "LEARNING",
+          items: [
+// {
+//     icon: <FaPlayCircle />,
+//     title: "Continue Learning",
+//     path: "/dashboard/my-courses",
+// },
+            {
+              icon: <FaChartLine />,
+              title: "My Progress",
+              path: "/dashboard/progress",
+            },
+            {
+              icon: <FaTrophy />,
+              title: "Certificates",
+              path: "/dashboard/certificates",
+            },
+          ],
         },
+
+        // {
+        //   section: "ACCOUNT",
+        //   items: [
+        //     {
+        //       icon: <FaUser />,
+        //       title: "Profile",
+        //       path: "/dashboard/profile",
+        //     },
+        //     {
+        //       icon: <FaCog />,
+        //       title: "Settings",
+        //       path: "/dashboard/settings",
+        //     },
+        //   ],
+        // },
       ];
+
+  // =========================
+  // ACTIVE MENU
+  // =========================
+
+  const isMenuActive = (path: string) => {
+    // Exact match for Dashboard
+    if (path === "/dashboard" || path === "/admin/dashboard") {
+      return location.pathname === path;
+    }
+
+    // Nested routes
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <aside
@@ -154,7 +229,9 @@ const Sidebar = ({
         ${collapsed ? "w-20" : "w-72"}
       `}
     >
-      {/* Header */}
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <div
         className={`
@@ -191,63 +268,93 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Menu */}
+      {/* =========================
+          MENU
+      ========================= */}
 
-      <div className="mx-1 flex-1 py-6">
-        {menuItems.map((item, index) => {
-          const isActive =
-            location.pathname.startsWith(item.path);
+      <div className="mx-2 flex-1 overflow-y-auto py-5 scrollbar-thin scrollbar-thumb-white/10">
+        {menuItems.map((section, sectionIndex) => (
+          <div
+            key={sectionIndex}
+            className="mb-6"
+          >
+            {/* Section Title */}
 
-          return (
-            <button
-              key={index}
-              title={collapsed ? item.title : ""}
-              onClick={() => navigate(item.path)}
-              className={`
-                group
-                relative
-                mb-2
-                flex
-                items-center
-                gap-4
-                rounded-xl
-                py-4
-                transition-all
-                duration-300
-
-                ${collapsed
-                  ? "justify-center px-7"
-                  : "justify-start px-6"
-                }
-
-                ${isActive
-                  ? "w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg"
-                  : "w-full text-gray-400 hover:bg-white/5 hover:text-white"
-                }
-              `}
-            >
-              <span
-                className={`
-                  text-xl
-                  ${collapsed ? "mx-auto" : ""}
-                `}
-              >
-                {item.icon}
-              </span>
-
-              {!collapsed && (
-                <span className="font-medium">
-                  {item.title}
+            {!collapsed && (
+              <div className="px-4 mb-3">
+                <span className="text-[11px] font-semibold tracking-wider text-gray-500">
+                  {section.section}
                 </span>
-              )}
-            </button>
-          );
-        })}
+              </div>
+            )}
+
+            {/* Section Items */}
+
+            {section.items.map((item, index) => {
+              const isActive = isMenuActive(item.path);
+
+              return (
+                <button
+                  key={index}
+                  title={collapsed ? item.title : ""}
+                  onClick={() => navigate(item.path)}
+                  className={`
+                    group
+                    relative
+                    mb-2
+                    flex
+                    items-center
+                    gap-4
+                    rounded-xl
+                    py-3.5
+                    transition-all
+                    duration-300
+
+                    ${
+                      collapsed
+                        ? "justify-center px-4"
+                        : "justify-start px-5"
+                    }
+
+                    ${
+                      isActive
+                        ? "w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg"
+                        : "w-full text-gray-400 hover:bg-white/5 hover:text-white"
+                    }
+                  `}
+                >
+                  <span
+                    className={`
+                      text-lg
+                      transition-transform
+                      duration-300
+                      ${
+                        !isActive
+                          ? "group-hover:scale-110"
+                          : ""
+                      }
+                    `}
+                  >
+                    {item.icon}
+                  </span>
+
+                  {!collapsed && (
+                    <span className="font-medium text-md">
+                      {item.title}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
-      {/* Logout */}
+      {/* =========================
+          LOGOUT
+      ========================= */}
 
-      <div className="border-t border-white/10 p-1">
+      <div className="border-t border-white/10 p-2">
         <button
           onClick={handleLogout}
           title={collapsed ? "Logout" : ""}
@@ -267,7 +374,7 @@ const Sidebar = ({
             ${
               collapsed
                 ? "mx-auto h-12 w-12 rounded-xl"
-                : "w-full rounded-md py-3"
+                : "w-full rounded-xl py-3"
             }
           `}
         >

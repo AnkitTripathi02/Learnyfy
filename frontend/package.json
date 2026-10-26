@@ -12,10 +12,12 @@
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
     "animate.css": "^4.1.1",
-    "file-saver": "^2.0.5",
     "axios": "^1.18.1",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^10.7.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
+    "lucide-react": "^1.61.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.84.0",
@@ -24,10 +26,9 @@
     "react-player": "^3.4.0",
     "react-router-dom": "^7.18.2",
     "react-youtube": "^10.1.0",
+    "recharts": "^3.10.1",
     "sweetalert2": "^11.26.25",
-    "zod": "^4.4.3",
-    "framer-motion": "10.7.0",
-    "recharts": "^3.10.1"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

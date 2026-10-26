@@ -17,6 +17,7 @@ class CourseCreate(BaseModel):
     price: Decimal = Decimal("0.00")
     instructor: str
     is_published: bool = False
+    access_duration_days: Optional[int] = None
 
 
 class CourseUpdate(BaseModel):
@@ -32,6 +33,7 @@ class CourseUpdate(BaseModel):
     price: Optional[Decimal] = None
     instructor: Optional[str] = None
     is_published: Optional[bool] = None
+    access_duration_days: Optional[int] = None
 
 
 class CourseResponse(BaseModel):
@@ -48,5 +50,6 @@ class CourseResponse(BaseModel):
     price: Decimal
     instructor: str
     is_published: bool
+    access_duration_days: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)

@@ -31,6 +31,15 @@ const AdminDashboard = () => {
 
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [showDashboardMenu, setShowDashboardMenu] = useState(false);
+
+    const [visibleSections, setVisibleSections] = useState({
+        quickActions: true,
+        systemStatus: true,
+        platformOverview: true,
+        overallAnalytics: true,
+        recentActivity: true,
+    });
 
     useEffect(() => {
         loadDashboard();
@@ -48,6 +57,14 @@ const AdminDashboard = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+
+    const toggleSection = (section: keyof typeof visibleSections) => {
+        setVisibleSections((prev) => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
     };
 
     /* =========================
@@ -73,6 +90,37 @@ const AdminDashboard = () => {
     /* =========================
        STATS
     ========================= */
+
+    const PLATFORM_TARGETS = {
+        users: 100,
+        courses: 50,
+        enrollments: 100,
+    };
+
+    const getProgress = (current: number, target: number) => {
+        if (!target || target <= 0) return 0;
+
+        return Math.min(
+            Math.round((current / target) * 100),
+            100
+        );
+    };
+
+    const userProgress = getProgress(
+        Number(data.total_users) || 0,
+        PLATFORM_TARGETS.users
+    );
+
+    const courseProgress = getProgress(
+        Number(data.total_courses) || 0,
+        PLATFORM_TARGETS.courses
+    );
+
+    const enrollmentProgress = getProgress(
+        Number(data.total_enrollments) || 0,
+        PLATFORM_TARGETS.enrollments
+    );
+
 
     const stats = [
         {
@@ -152,7 +200,7 @@ const AdminDashboard = () => {
             {/* =====================================================
           HEADER
       ===================================================== */}
-{/* 
+            {/* 
             <div className="flex flex-col gap-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#141222] lg:flex-row lg:items-center lg:justify-between">
 
                 <div>
@@ -252,292 +300,364 @@ const AdminDashboard = () => {
             {/* =====================================================
           MAIN GRID
       ===================================================== */}
-
-            <div className="grid gap-6 xl:grid-cols-3">
+            <div
+                className={`grid gap-6 ${[
+                    visibleSections.quickActions,
+                    visibleSections.systemStatus,
+                    visibleSections.platformOverview,
+                ].filter(Boolean).length === 1
+                    ? "xl:grid-cols-1"
+                    : [
+                        visibleSections.quickActions,
+                        visibleSections.systemStatus,
+                        visibleSections.platformOverview,
+                    ].filter(Boolean).length === 2
+                        ? "xl:grid-cols-2"
+                        : "xl:grid-cols-3"
+                    }`}
+            >
 
                 {/* ================= QUICK ACTIONS ================= */}
+                {visibleSections.quickActions && (
+                    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#141222]">
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+                        <div className="mb-5">
 
-                    <div className="mb-5">
+                            <div className="flex items-center gap-3">
 
-                        <div className="flex items-center gap-3">
+                                <div className="rounded-xl bg-purple-500/10 p-3 text-purple-500 dark:text-purple-400">
+                                    <FaChartLine />
+                                </div>
 
-                            <div className="rounded-xl bg-purple-500/10 p-3 text-purple-500 dark:text-purple-400">
-                                <FaChartLine />
-                            </div>
+                                <div>
 
-                            <div>
+                                    <h2 className="font-bold text-gray-900 dark:text-white">
+                                        Quick Actions
+                                    </h2>
 
-                                <h2 className="font-bold text-gray-900 dark:text-white">
-                                    Quick Actions
-                                </h2>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        Manage your platform
+                                    </p>
 
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    Manage your platform
-                                </p>
+                                </div>
 
                             </div>
 
                         </div>
 
-                    </div>
+                        <div className="space-y-3">
 
-                    <div className="space-y-3">
-
-                        <button
-                            onClick={() => navigate("/admin/courses")}
-                            className="group flex w-full items-center justify-between rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-4 text-left text-white shadow-lg shadow-purple-500/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-purple-500/20"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="rounded-lg bg-white/15 p-2">
-                                    <FaPlus />
-                                </div>
-
-                                <div>
-
-                                    <p className="text-sm font-semibold">
-                                        Create New Course
-                                    </p>
-
-                                    <p className="text-xs text-white/70">
-                                        Add a new course
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <FaArrowRight className="transition-transform group-hover:translate-x-1" />
-
-                        </button>
-
-
-                        <button
-                            onClick={() => navigate("/admin/courses")}
-                            className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition-all duration-300 hover:border-purple-500 hover:bg-purple-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-purple-500/10"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500 dark:text-blue-400">
-                                    <FaBook />
-                                </div>
-
-                                <div>
-
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                                        Manage Courses
-                                    </p>
-
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        Edit or manage courses
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <FaArrowRight className="text-gray-400 transition-transform group-hover:translate-x-1" />
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                {/* ================= SYSTEM STATUS ================= */}
-
-                <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
-
-                    <div className="mb-5">
-
-                        <h2 className="font-bold text-gray-900 dark:text-white">
-                            System Status
-                        </h2>
-
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Current platform services
-                        </p>
-
-                    </div>
-
-                    <div className="space-y-3">
-
-                        {[
-                            {
-                                icon: <FaServer />,
-                                title: "Backend",
-                                status: "Online",
-                            },
-                            {
-                                icon: <FaDatabase />,
-                                title: "Database",
-                                status: "Connected",
-                            },
-                            {
-                                icon: <FaRupeeSign />,
-                                title: "Payment Gateway",
-                                status: "Active",
-                            },
-                            {
-                                icon: <FaCloud />,
-                                title: "Cloud Storage",
-                                status: "Healthy",
-                            },
-                        ].map((item, index) => (
-
-                            <div
-                                key={index}
-                                className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-white/5"
+                            <button
+                                onClick={() => navigate("/admin/courses")}
+                                className="group flex w-full items-center justify-between rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-4 text-left text-white shadow-lg shadow-purple-500/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-purple-500/20"
                             >
 
                                 <div className="flex items-center gap-3">
 
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        {item.icon}
+                                    <div className="rounded-lg bg-white/15 p-2">
+                                        <FaPlus />
                                     </div>
 
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                        {item.title}
+                                    <div>
+
+                                        <p className="text-sm font-semibold">
+                                            Create New Course
+                                        </p>
+
+                                        <p className="text-xs text-white/70">
+                                            Add a new course
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+
+                            </button>
+
+
+                            <button
+                                onClick={() => navigate("/admin/courses")}
+                                className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-left transition-all duration-300 hover:border-purple-500 hover:bg-purple-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-purple-500/10"
+                            >
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500 dark:text-blue-400">
+                                        <FaBook />
+                                    </div>
+
+                                    <div>
+
+                                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                                            Manage Courses
+                                        </p>
+
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            Edit or manage courses
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <FaArrowRight className="text-gray-400 transition-transform group-hover:translate-x-1" />
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                )}
+
+                {/* ================= SYSTEM STATUS ================= */}
+                {visibleSections.systemStatus && (
+                    <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+
+                        <div className="mb-5">
+
+                            <h2 className="font-bold text-gray-900 dark:text-white">
+                                System Status
+                            </h2>
+
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Current platform services
+                            </p>
+
+                        </div>
+
+                        <div className="space-y-3">
+
+                            {[
+                                {
+                                    icon: <FaServer />,
+                                    title: "Backend",
+                                    status: "Online",
+                                },
+                                {
+                                    icon: <FaDatabase />,
+                                    title: "Database",
+                                    status: "Connected",
+                                },
+                                {
+                                    icon: <FaRupeeSign />,
+                                    title: "Payment Gateway",
+                                    status: "Active",
+                                },
+                                // {
+                                //     icon: <FaCloud />,
+                                //     title: "Cloud Storage",
+                                //     status: "Healthy",
+                                // },
+                            ].map((item, index) => (
+
+                                <div
+                                    key={index}
+                                    className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-white/5"
+                                >
+
+                                    <div className="flex items-center gap-3">
+
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            {item.icon}
+                                        </div>
+
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            {item.title}
+                                        </span>
+
+                                    </div>
+
+                                    <span className="flex items-center gap-1.5 text-xs font-semibold text-green-500">
+
+                                        <span className="h-2 w-2 rounded-full bg-green-500 shadow-sm shadow-green-500/50" />
+
+                                        {item.status}
+
                                     </span>
 
                                 </div>
 
-                                <span className="flex items-center gap-1.5 text-xs font-semibold text-green-500">
+                            ))}
 
-                                    <span className="h-2 w-2 rounded-full bg-green-500 shadow-sm shadow-green-500/50" />
-
-                                    {item.status}
-
-                                </span>
-
-                            </div>
-
-                        ))}
+                        </div>
 
                     </div>
-
-                </div>
-
+                )}
 
                 {/* ================= PLATFORM OVERVIEW ================= */}
+                {visibleSections.platformOverview && (
+                    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#141222]">
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+                        <div className="mb-5">
 
-                    <div className="mb-5">
+                            <h2 className="font-bold text-gray-900 dark:text-white">
+                                Platform Overview
+                            </h2>
 
-                        <h2 className="font-bold text-gray-900 dark:text-white">
-                            Platform Overview
-                        </h2>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Current platform numbers
+                            </p>
 
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Current platform numbers
-                        </p>
+                        </div>
+
+                        <div className="space-y-3">
+
+                            <div className="mb-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-3">
+
+                                        <div className="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-500/10 flex items-center justify-center">
+                                            <svg
+                                                className="w-4 h-4 text-purple-600 dark:text-purple-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                Users
+                                            </p>
+
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                {data.total_users} / {PLATFORM_TARGETS.users}
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400">
+                                        {userProgress}%
+                                    </span>
+                                </div>
+
+                                <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-purple-500 rounded-full transition-all duration-700"
+                                        style={{
+                                            width: `${userProgress}%`,
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+
+                            {/* Courses */}
+                            <div className="mb-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-3">
+
+                                        <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-500/10 flex items-center justify-center">
+                                            <svg
+                                                className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5S19.832 5.477 21 6.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                Courses
+                                            </p>
+
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                {data.total_courses} / {PLATFORM_TARGETS.courses}
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
+                                        {courseProgress}%
+                                    </span>
+                                </div>
+
+                                <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-blue-500 rounded-full transition-all duration-700"
+                                        style={{
+                                            width: `${courseProgress}%`,
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+
+                            {/* Enrollments */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-3">
+
+                                        <div className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-500/10 flex items-center justify-center">
+                                            <svg
+                                                className="w-4 h-4 text-green-600 dark:text-green-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 14l9-5-9-5-9 5 9 5z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 14l6.16-3.422A12.083 12.083 0 0118 15.5c0 1.657-2.686 3-6 3s-6-1.343-6-3c0-.33.05-.654.145-.967L12 14z"
+                                                />
+                                            </svg>
+                                        </div>
+
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                Enrollments
+                                            </p>
+
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                {data.total_enrollments} / {PLATFORM_TARGETS.enrollments}
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400">
+                                        {enrollmentProgress}%
+                                    </span>
+                                </div>
+
+                                <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-green-500 rounded-full transition-all duration-700"
+                                        style={{
+                                            width: `${enrollmentProgress}%`,
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
-
-                    <div className="space-y-4">
-
-                        <div>
-
-                            <div className="mb-2 flex justify-between text-sm">
-
-                                <span className="text-gray-500 dark:text-gray-400">
-                                    Users
-                                </span>
-
-                                <span className="font-semibold text-gray-900 dark:text-white">
-                                    {data.total_users}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-
-                                <div
-                                    className="h-full rounded-full bg-purple-500"
-                                    style={{
-                                        width: `${Math.min(
-                                            Number(data.total_users) || 0,
-                                            100
-                                        )}%`,
-                                    }}
-                                />
-
-                            </div>
-
-                        </div>
-
-
-                        <div>
-
-                            <div className="mb-2 flex justify-between text-sm">
-
-                                <span className="text-gray-500 dark:text-gray-400">
-                                    Courses
-                                </span>
-
-                                <span className="font-semibold text-gray-900 dark:text-white">
-                                    {data.total_courses}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-
-                                <div
-                                    className="h-full rounded-full bg-blue-500"
-                                    style={{
-                                        width: `${Math.min(
-                                            Number(data.total_courses) || 0,
-                                            100
-                                        )}%`,
-                                    }}
-                                />
-
-                            </div>
-
-                        </div>
-
-
-                        <div>
-
-                            <div className="mb-2 flex justify-between text-sm">
-
-                                <span className="text-gray-500 dark:text-gray-400">
-                                    Enrollments
-                                </span>
-
-                                <span className="font-semibold text-gray-900 dark:text-white">
-                                    {data.total_enrollments}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-
-                                <div
-                                    className="h-full rounded-full bg-green-500"
-                                    style={{
-                                        width: `${Math.min(
-                                            Number(data.total_enrollments) || 0,
-                                            100
-                                        )}%`,
-                                    }}
-                                />
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                )}
             </div>
 
 
@@ -545,202 +665,354 @@ const AdminDashboard = () => {
           ANALYTICS + ACTIVITY
       ===================================================== */}
 
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div
+                className={`grid gap-6 ${[
+                        visibleSections.overallAnalytics,
+                        visibleSections.recentActivity,
+                    ].filter(Boolean).length === 1
+                        ? "lg:grid-cols-1"
+                        : "lg:grid-cols-2"
+                    }`}
+            >
 
                 {/* ================= REVENUE ANALYTICS ================= */}
+                {visibleSections.overallAnalytics && (
+                    <div className="rounded-2xl border border-gray-200 p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+                        <div className="mb-1 flex items-center justify-between">
 
-                    <div className="mb-1 flex items-center justify-between">
+                            <div>
 
-                        <div>
+                                <div className="flex items-center gap-2">
 
-                            <div className="flex items-center gap-2">
+                                    <FaChartLine className="text-purple-500 dark:text-purple-400" />
 
-                                <FaChartLine className="text-purple-500 dark:text-purple-400" />
+                                    <h2 className="font-bold text-gray-900 dark:text-white">
+                                        Overall Analytics
+                                    </h2>
 
-                                <h2 className="font-bold text-gray-900 dark:text-white">
-                                    Revenue Analytics
-                                </h2>
+                                </div>
+
+                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    Platform performance overview
+                                </p>
 
                             </div>
 
+                        </div>
+
+                        <div className="h-72">
+
+                            <ResponsiveContainer
+                                width="100%"
+                                height="100%"
+                            >
+
+                                <PieChart>
+
+                                    <Pie
+                                        data={revenueData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={95}
+                                        paddingAngle={4}
+                                        stroke="none"
+                                        isAnimationActive
+                                    >
+
+                                        {revenueData.map(
+                                            (_, index) => (
+                                                <Cell
+                                                    key={index}
+                                                    fill={COLORS[index]}
+                                                    stroke="none"
+                                                />
+                                            )
+                                        )}
+
+                                    </Pie>
+
+                                    <Tooltip
+                                        contentStyle={{
+                                            backgroundColor: "#141222",
+                                            border: "1px solid rgba(255,255,255,0.1)",
+                                            borderRadius: "12px",
+                                            color: "#fff",
+                                        }}
+                                    />
+
+                                    <Legend
+                                        wrapperStyle={{
+                                            fontSize: 12,
+                                        }}
+                                    />
+
+                                </PieChart>
+
+                            </ResponsiveContainer>
+
+                        </div>
+
+                    </div>
+                )}
+
+                {/* ================= RECENT ACTIVITY ================= */}
+                {visibleSections.recentActivity && (
+                    <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+
+                        <div className="mb-1">
+
+                            <h2 className="font-bold text-gray-900 dark:text-white">
+                                Recent Activity
+                            </h2>
+
                             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                Platform performance overview
+                                Latest platform statistics
                             </p>
 
                         </div>
 
+                        <div className="space-y-3">
+
+                            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="rounded-lg bg-purple-500/10 p-2 text-purple-500 dark:text-purple-400">
+                                        <FaUsers />
+                                    </div>
+
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                                        Total Users
+                                    </span>
+
+                                </div>
+
+                                <span className="font-bold text-gray-900 dark:text-white">
+                                    {data.total_users}
+                                </span>
+
+                            </div>
+
+
+                            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500 dark:text-blue-400">
+                                        <FaBook />
+                                    </div>
+
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                                        Total Courses
+                                    </span>
+
+                                </div>
+
+                                <span className="font-bold text-gray-900 dark:text-white">
+                                    {data.total_courses}
+                                </span>
+
+                            </div>
+
+
+                            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="rounded-lg bg-green-500/10 p-2 text-green-500 dark:text-green-400">
+                                        <FaGraduationCap />
+                                    </div>
+
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                                        Total Enrollments
+                                    </span>
+
+                                </div>
+
+                                <span className="font-bold text-gray-900 dark:text-white">
+                                    {data.total_enrollments}
+                                </span>
+
+                            </div>
+
+
+                            <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+
+                                <div className="flex items-center gap-3">
+
+                                    <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500 dark:text-yellow-400">
+                                        <FaRupeeSign />
+                                    </div>
+
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                                        Paid Revenue
+                                    </span>
+
+                                </div>
+
+                                <span className="font-bold text-green-500">
+                                    ₹
+                                    {Number(
+                                        data.paid_enrollment_amount ?? 0
+                                    ).toLocaleString("en-IN")}
+                                </span>
+
+                            </div>
+
+                        </div>
+
                     </div>
+                )}
+            </div>
+            {/* =====================================================
+                DASHBOARD CUSTOMIZATION
+            ===================================================== */}
 
-                    <div className="h-72">
+            <div className="fixed bottom-6 right-6 z-50">
 
-                        <ResponsiveContainer
-                            width="100%"
-                            height="100%"
-                        >
+                {/* CUSTOMIZATION MENU */}
 
-                            <PieChart>
+                {showDashboardMenu && (
+                    <div className="absolute bottom-14 right-0 w-64 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl dark:border-white/10 dark:bg-[#141222]">
 
-                                <Pie
-                                    data={revenueData}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={95}
-                                    paddingAngle={4}
-                                    stroke="none"
-                                    isAnimationActive
-                                >
+                        <div className="mb-3">
 
-                                    {revenueData.map(
-                                        (_, index) => (
-                                            <Cell
-                                                key={index}
-                                                fill={COLORS[index]}
-                                                stroke="none"
-                                            />
-                                        )
-                                    )}
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-white">
+                                Dashboard Sections
+                            </h3>
 
-                                </Pie>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Show or hide sections
+                            </p>
 
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: "#141222",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        borderRadius: "12px",
-                                        color: "#fff",
-                                    }}
+                        </div>
+
+
+                        <div className="space-y-1">
+
+                            {/* QUICK ACTIONS */}
+
+                            <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5">
+
+                                <span className="text-sm text-gray-700 dark:text-gray-200">
+                                    Quick Actions
+                                </span>
+
+                                <input
+                                    type="checkbox"
+                                    checked={visibleSections.quickActions}
+                                    onChange={() =>
+                                        toggleSection("quickActions")
+                                    }
+                                    className="h-4 w-4 accent-purple-600"
                                 />
 
-                                <Legend
-                                    wrapperStyle={{
-                                        fontSize: 12,
-                                    }}
+                            </label>
+
+
+                            {/* SYSTEM STATUS */}
+
+                            <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5">
+
+                                <span className="text-sm text-gray-700 dark:text-gray-200">
+                                    System Status
+                                </span>
+
+                                <input
+                                    type="checkbox"
+                                    checked={visibleSections.systemStatus}
+                                    onChange={() =>
+                                        toggleSection("systemStatus")
+                                    }
+                                    className="h-4 w-4 accent-purple-600"
                                 />
 
-                            </PieChart>
-
-                        </ResponsiveContainer>
-
-                    </div>
-
-                </div>
+                            </label>
 
 
-                {/* ================= RECENT ACTIVITY ================= */}
+                            {/* PLATFORM OVERVIEW */}
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-[#141222]">
+                            <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5">
 
-                    <div className="mb-1">
-
-                        <h2 className="font-bold text-gray-900 dark:text-white">
-                            Recent Activity
-                        </h2>
-
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Latest platform statistics
-                        </p>
-
-                    </div>
-
-                    <div className="space-y-3">
-
-                        <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="rounded-lg bg-purple-500/10 p-2 text-purple-500 dark:text-purple-400">
-                                    <FaUsers />
-                                </div>
-
-                                <span className="text-sm text-gray-600 dark:text-gray-300">
-                                    Total Users
+                                <span className="text-sm text-gray-700 dark:text-gray-200">
+                                    Platform Overview
                                 </span>
 
-                            </div>
+                                <input
+                                    type="checkbox"
+                                    checked={visibleSections.platformOverview}
+                                    onChange={() =>
+                                        toggleSection("platformOverview")
+                                    }
+                                    className="h-4 w-4 accent-purple-600"
+                                />
 
-                            <span className="font-bold text-gray-900 dark:text-white">
-                                {data.total_users}
-                            </span>
-
-                        </div>
+                            </label>
 
 
-                        <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+                            {/* OVERALL ANALYTICS */}
 
-                            <div className="flex items-center gap-3">
+                            <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5">
 
-                                <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500 dark:text-blue-400">
-                                    <FaBook />
-                                </div>
-
-                                <span className="text-sm text-gray-600 dark:text-gray-300">
-                                    Total Courses
+                                <span className="text-sm text-gray-700 dark:text-gray-200">
+                                    Overall Analytics
                                 </span>
 
-                            </div>
+                                <input
+                                    type="checkbox"
+                                    checked={visibleSections.overallAnalytics}
+                                    onChange={() =>
+                                        toggleSection("overallAnalytics")
+                                    }
+                                    className="h-4 w-4 accent-purple-600"
+                                />
 
-                            <span className="font-bold text-gray-900 dark:text-white">
-                                {data.total_courses}
-                            </span>
-
-                        </div>
+                            </label>
 
 
-                        <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
+                            {/* RECENT ACTIVITY */}
 
-                            <div className="flex items-center gap-3">
+                            <label className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 hover:bg-gray-100 dark:hover:bg-white/5">
 
-                                <div className="rounded-lg bg-green-500/10 p-2 text-green-500 dark:text-green-400">
-                                    <FaGraduationCap />
-                                </div>
-
-                                <span className="text-sm text-gray-600 dark:text-gray-300">
-                                    Total Enrollments
+                                <span className="text-sm text-gray-700 dark:text-gray-200">
+                                    Recent Activity
                                 </span>
 
-                            </div>
+                                <input
+                                    type="checkbox"
+                                    checked={visibleSections.recentActivity}
+                                    onChange={() =>
+                                        toggleSection("recentActivity")
+                                    }
+                                    className="h-4 w-4 accent-purple-600"
+                                />
 
-                            <span className="font-bold text-gray-900 dark:text-white">
-                                {data.total_enrollments}
-                            </span>
-
-                        </div>
-
-
-                        <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-white/5">
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500 dark:text-yellow-400">
-                                    <FaRupeeSign />
-                                </div>
-
-                                <span className="text-sm text-gray-600 dark:text-gray-300">
-                                    Paid Revenue
-                                </span>
-
-                            </div>
-
-                            <span className="font-bold text-green-500">
-                                ₹
-                                {Number(
-                                    data.paid_enrollment_amount ?? 0
-                                ).toLocaleString("en-IN")}
-                            </span>
+                            </label>
 
                         </div>
 
                     </div>
+                )}
 
-                </div>
+
+                {/* THREE DOT BUTTON */}
+
+                <button
+                    type="button"
+                    onClick={() =>
+                        setShowDashboardMenu((prev) => !prev)
+                    }
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-600 text-xl font-bold text-white shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-105 hover:bg-purple-700"
+                    title="Customize Dashboard"
+                >
+                    ⋮
+                </button>
 
             </div>
-
         </div>
     );
 };

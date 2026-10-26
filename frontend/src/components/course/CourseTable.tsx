@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-
+import { Link } from "react-router-dom";
 interface Props {
     courses: any[];
     onEdit: (course: any) => void;
@@ -125,16 +125,27 @@ const CourseTable = ({
                                     </span>
                                 </td>
 
-                                <td className="w-[24%] px-6 py-5 whitespace-nowrap">
+                                <td className="w-[24%] px-6 py-5 whitespace-nowrap target:blank">
 
-                                    <button
-                                        onClick={() =>
-                                            navigate(`/courses/${course.id}`)
-                                        }
-                                        className="mr-2 rounded-lg bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-700"
+                                    <Link
+                                        to={`/courses/${course.id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="
+        mr-2
+        inline-block
+        rounded-lg
+        bg-purple-600
+        px-3
+        py-1
+        text-sm
+        text-white
+        transition
+        hover:bg-purple-700
+    "
                                     >
                                         View
-                                    </button>
+                                    </Link>
 
                                     <button
                                         onClick={() => onEdit(course)}

@@ -243,7 +243,7 @@ const AdminStudents = () => {
                 <div className="max-h-[525px] overflow-y-auto">
                     <table className="w-full">
 
-                        <thead className="sticky top-0 z-20 bg-[#575270]">
+                        <thead className="sticky top-0 z-30 bg-gradient-to-r from-[#221a38] to-[#1a142d] backdrop-blur-xl shadow-lg border-b border-purple-500/20">
 
                             <tr className="border-b border-white/10 text-left text-gray-400">
 
@@ -278,7 +278,7 @@ const AdminStudents = () => {
 
                                 <tr
                                     key={student.id}
-                                    className="border-b border-white/5 transition-all duration-300 hover:bg-white/5"
+                                    className="border-b border-white/5 transition-all duration-300 hover:bg-[#221b37]"
                                 >
 
                                     <td className="py-5">

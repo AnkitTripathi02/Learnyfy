@@ -15,6 +15,21 @@ export const completeLesson = async (
   return response.data;
 };
 
+export const accessLesson = async (
+  courseId: string,
+  lessonId: string,
+  userId: string
+) => {
+  const response = await axiosInstance.post(
+    `/courses/${courseId}/lessons/${lessonId}/access`,
+    {
+      user_id: userId,
+    }
+  );
+
+  return response.data;
+};
+
 export const getCourseProgress = async (
   courseId: string,
   userId: string

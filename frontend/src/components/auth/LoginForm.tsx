@@ -175,13 +175,34 @@ try {
   }
 
 } catch (error: any) {
-  Swal.fire({
+  const status = error?.response?.status;
+  const message =
+    error?.response?.data?.message ||
+    error?.response?.data?.detail;
+
+  if (status === 404) {
+    await Swal.fire({
+      icon: "warning",
+      title: "Account Not Found",
+      text: "No account exists with this email. Please sign up first.",
+      background: "#161122",
+      color: "#ffffff",
+      confirmButtonText: "Sign Up",
+      confirmButtonColor: "#6366f1",
+      customClass: {
+        popup: "rounded-3xl",
+        confirmButton: "rounded-xl px-6 py-3",
+      },
+    });
+
+    onSignup();
+    return;
+  }
+
+  await Swal.fire({
     icon: "error",
     title: "Login Failed",
-    text:
-      error?.response?.data?.message ||
-      error?.response?.data?.detail ||
-      "Invalid email or password.",
+    text: message || "Invalid email or password.",
     background: "#161122",
     color: "#ffffff",
     confirmButtonColor: "#ef4444",

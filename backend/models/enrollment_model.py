@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, DateTime, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from database import Base
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Enrollment(Base):
@@ -23,13 +23,18 @@ class Enrollment(Base):
 
     isactive = Column(Boolean, default=True)
 
+    expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
     created_at = Column(
-        DateTime,
-        default=datetime.utcnow
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)
     )
 
     updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
     )

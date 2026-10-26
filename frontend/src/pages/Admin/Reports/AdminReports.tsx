@@ -379,7 +379,7 @@ const AdminReports = () => {
     }
 
     return (
-        <div className="min-h-full space-y-6 p-6">
+        <div className="min-h-full space-y-6 px-6 py-2">
 
             {/* =================================================
                 HEADER
@@ -1276,7 +1276,7 @@ const AdminReports = () => {
                 FOOTER
             ================================================= */}
 
-            <div className="flex flex-col gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-5 py-4 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
+            {/* <div className="flex flex-col gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-5 py-4 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
 
                 <span>
                     LearnyFy Analytics
@@ -1286,7 +1286,7 @@ const AdminReports = () => {
                     Data generated from platform analytics.
                 </span>
 
-            </div>
+            </div> */}
 
         </div>
     );

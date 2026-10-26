@@ -18,10 +18,11 @@ import {
 import {
     completeLesson,
     getCourseProgress,
+    accessLesson,
 } from "../api/lessonProgressApi";
 
-import Navbar from "../components/home/Navbar";
-import Footer from "../components/home/Footer";
+// import Navbar from "../components/home/Navbar";
+// import Footer from "../components/home/Footer";
 
 import { getCourseById } from "../api/courseApi";
 import { getModules } from "../api/moduleApi";
@@ -29,7 +30,7 @@ import { getLessons } from "../api/lessonApi";
 
 
 const LearnCourse = () => {
-    const { id } = useParams();
+    const { id, lesson: lessonId } = useParams();
     const navigate = useNavigate();
     const user = JSON.parse(
         localStorage.getItem("user") || "{}"
@@ -56,9 +57,9 @@ const LearnCourse = () => {
     //    LOAD COURSE
 
 
-    useEffect(() => {
-        loadCourse();
-    }, [id]);
+useEffect(() => {
+    loadCourse();
+}, [id, lessonId]);
 
     useEffect(() => {
 
@@ -81,112 +82,155 @@ const LearnCourse = () => {
 
     }, [countdown]);
 
-    const loadCourse = async () => {
-        if (!id) return;
+const loadCourse = async () => {
+    if (!id) return;
 
-        try {
-            setLoading(true);
-            setError("");
+    try {
+        setLoading(true);
+        setError("");
 
-            /* Course */
-            const courseData = await getCourseById(id);
+        const courseData = await getCourseById(id);
+        const moduleData = await getModules(id);
 
-            /* Modules */
-            const moduleData = await getModules(id);
-
-            /* Lessons - load in parallel */
-            const lessonResults = await Promise.all(
-                moduleData.map(async (module: any) => {
-                    try {
-                        const lessonData = await getLessons(module.id);
-
-                        return {
-                            moduleId: module.id,
-                            lessons: lessonData || [],
-                        };
-                    } catch (lessonError) {
-                        console.error(
-                            `Failed to load lessons for module ${module.id}`,
-                            lessonError
-                        );
-
-                        return {
-                            moduleId: module.id,
-                            lessons: [],
-                        };
-                    }
-                })
-            );
-
-            const lessonMap: Record<string, any[]> = {};
-
-            lessonResults.forEach((item) => {
-                lessonMap[item.moduleId] = item.lessons;
-            });
-
-            /* First lesson */
-            let firstLesson: any = null;
-
-            for (const module of moduleData) {
-                const moduleLessons =
-                    lessonMap[module.id] || [];
-
-                if (moduleLessons.length > 0) {
-                    firstLesson = {
-                        ...moduleLessons[0],
-                        moduleId: module.id,
-                    };
-
-                    break;
-                }
-            }
-
-            /* Initial module state */
-            const initialOpenState: Record<string, boolean> = {};
-
-            moduleData.forEach(
-                (module: any, index: number) => {
-                    initialOpenState[module.id] = index === 0;
-                }
-            );
-
-            /* Set state */
-            setCourse(courseData);
-            setModules(moduleData);
-            setLessons(lessonMap);
-            setOpenModules(initialOpenState);
-
-            if (user?.id) {
+        const lessonResults = await Promise.all(
+            moduleData.map(async (module: any) => {
                 try {
-                    const progress = await getCourseProgress(id, user.id);
+                    const lessonData = await getLessons(module.id);
 
-                    setCourseProgress(progress);
-
-                    setCompletedLessons(
-                        progress.completed_lesson_list?.map(
-                            (lesson: any) => String(lesson.lesson_id)
-                        ) || []
+                    return {
+                        moduleId: module.id,
+                        lessons: lessonData || [],
+                    };
+                } catch (error) {
+                    console.error(
+                        `Failed to load lessons for module ${module.id}`,
+                        error
                     );
 
-                } catch (err) {
-                    console.log(err);
+                    return {
+                        moduleId: module.id,
+                        lessons: [],
+                    };
                 }
-            }
-            if (firstLesson) {
-                setSelectedLesson(firstLesson);
-            } else {
-                setSelectedLesson(null);
-            }
-        } catch (err) {
-            console.error("LearnCourse Error:", err);
+            })
+        );
 
-            setError(
-                "Unable to load this course. Please try again."
-            );
-        } finally {
-            setLoading(false);
+        const lessonMap: Record<string, any[]> = {};
+
+        lessonResults.forEach((item) => {
+            lessonMap[item.moduleId] = item.lessons;
+        });
+
+        let firstLesson: any = null;
+
+        for (const module of moduleData) {
+            const moduleLessons = lessonMap[module.id] || [];
+
+            if (moduleLessons.length > 0) {
+                firstLesson = {
+                    ...moduleLessons[0],
+                    moduleId: module.id,
+                };
+
+                break;
+            }
         }
-    };
+
+        const initialOpenState: Record<string, boolean> = {};
+
+        moduleData.forEach((module: any, index: number) => {
+            initialOpenState[module.id] = index === 0;
+        });
+
+        setCourse(courseData);
+        setModules(moduleData);
+        setLessons(lessonMap);
+        setOpenModules(initialOpenState);
+
+        // Load progress
+        let loadedProgress: any = null;
+
+        if (user?.id) {
+            try {
+                loadedProgress = await getCourseProgress(
+                    id,
+                    user.id
+                );
+                console.log("COURSE PROGRESS RESPONSE:", loadedProgress);
+console.log(
+    "LAST LESSON ID:",
+    loadedProgress?.last_lesson_id
+);
+
+                setCourseProgress(loadedProgress);
+
+                setCompletedLessons(
+                    loadedProgress.completed_lesson_list?.map(
+                        (lesson: any) =>
+                            String(lesson.lesson_id)
+                    ) || []
+                );
+            } catch (error) {
+                console.error(
+                    "Failed to load course progress:",
+                    error
+                );
+            }
+        }
+
+        // Resume last accessed lesson
+// Resume last accessed lesson
+const resumeLessonId =
+    lessonId || loadedProgress?.last_lesson_id;
+
+let resumeLesson: any = null;
+
+if (resumeLessonId) {
+    for (const module of moduleData) {
+        const moduleLessons = lessonMap[module.id] || [];
+
+        const foundLesson = moduleLessons.find(
+            (lesson: any) =>
+                String(lesson.id) === String(resumeLessonId)
+        );
+
+        if (foundLesson) {
+            resumeLesson = {
+                ...foundLesson,
+                moduleId: module.id,
+            };
+
+            break;
+        }
+    }
+}
+
+if (resumeLesson) {
+    setSelectedLesson(resumeLesson);
+
+    setOpenModules((prev) => ({
+        ...prev,
+        [resumeLesson.moduleId]: true,
+    }));
+} else if (firstLesson) {
+    setSelectedLesson(firstLesson);
+} else {
+    setSelectedLesson(null);
+}
+
+    } catch (error) {
+        console.error(
+            "LearnCourse Error:",
+            error
+        );
+
+        setError(
+            "Unable to load this course. Please try again."
+        );
+    } finally {
+        setLoading(false);
+    }
+};
 
 
     //    YOUTUBE EMBED URL
@@ -272,27 +316,41 @@ const LearnCourse = () => {
     //    SELECT LESSON
 
 
-    const selectLesson = (
-        lesson: any,
-        moduleId: string
-    ) => {
-        setSelectedLesson({
-            ...lesson,
-            moduleId,
-        });
+const selectLesson = async (
+    lesson: any,
+    moduleId: string
+) => {
+    setSelectedLesson({
+        ...lesson,
+        moduleId,
+    });
 
-        /* Automatically open selected module */
-        setOpenModules((prev) => ({
-            ...prev,
-            [moduleId]: true,
-        }));
+    setOpenModules((prev) => ({
+        ...prev,
+        [moduleId]: true,
+    }));
 
-        /* Scroll to top */
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-    };
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+
+    // Save last accessed lesson
+    if (user?.id && id) {
+        try {
+            await accessLesson(
+                id,
+                lesson.id,
+                user.id
+            );
+        } catch (error) {
+            console.error(
+                "Failed to save last accessed lesson:",
+                error
+            );
+        }
+    }
+};
 
     /* ============================================================
        PREVIOUS LESSON
@@ -446,9 +504,9 @@ const LearnCourse = () => {
     if (loading) {
         return (
             <>
-                <Navbar />
+                {/* <Navbar /> */}
 
-                <main className="flex min-h-screen items-center justify-center bg-[#07070c] px-6 text-white">
+                <main className="flex   items-center justify-center bg-[#07070c] px-6 text-white">
                     <div className="text-center">
 
                         <div className="relative mx-auto h-20 w-20">
@@ -484,9 +542,9 @@ const LearnCourse = () => {
     if (error || !course) {
         return (
             <>
-                <Navbar />
+                {/* <Navbar /> */}
 
-                <main className="flex min-h-screen items-center justify-center bg-[#07070c] px-6 text-white">
+                <main className="flex   items-center justify-center bg-[#07070c] px-6 text-white">
 
                     <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center shadow-2xl">
 
@@ -525,7 +583,7 @@ const LearnCourse = () => {
 
                 </main>
 
-                <Footer />
+                {/* <Footer /> */}
             </>
         );
     }
@@ -536,9 +594,9 @@ const LearnCourse = () => {
 
     return (
         <>
-            <Navbar />
+            {/* <Navbar /> */}
 
-            <main className="min-h-screen bg-[#07070c] pt-20 text-white">
+            <main className="  bg-[#07070c] text-white">
 
                 {/* =================================================
                     COURSE HEADER
@@ -546,7 +604,7 @@ const LearnCourse = () => {
 
                 <section className="border-b border-white/10 bg-gradient-to-b from-[#11101d] via-[#0c0b14] to-[#07070c]">
 
-                    <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
 
                         {/* ================= BREADCRUMB ================= */}
 
@@ -731,7 +789,7 @@ const LearnCourse = () => {
 
                             {/* Modules */}
 
-                            <div className="max-h-[68vh] overflow-y-auto p-3">
+                           <div className="max-h-[68vh] overflow-y-auto scrollbar-hide p-3">
 
                                 {modules.length === 0 ? (
 
@@ -1002,32 +1060,24 @@ const LearnCourse = () => {
                                         </div>
                                     )}
 
-                                    {selectedLesson.video_url ? (
-
-                                        // <iframe
-                                        //     className="aspect-video w-full"
-                                        //     src={getEmbedUrl(
-                                        //         selectedLesson.video_url
-                                        //     )}
-                                        //     title={
-                                        //         selectedLesson.title
-                                        //     }
-                                        //     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        //     allowFullScreen
-                                        // />
-                                        <YouTube
-                                            videoId={getEmbedUrl(selectedLesson.video_url).split("/embed/")[1]}
-                                            opts={{
-                                                width: "100%",
-                                                height: "650",
-                                                playerVars: {
-                                                    autoplay: 0,
-                                                },
-                                            }}
-                                            onEnd={handleVideoEnd}
-                                        />
-
-                                    ) : (
+{selectedLesson.video_url ? (
+    <div className="aspect-video w-full">
+        <YouTube
+            videoId={
+                getEmbedUrl(selectedLesson.video_url).split("/embed/")[1]
+            }
+            opts={{
+                width: "100%",
+                height: "100%",
+                playerVars: {
+                    autoplay: 0,
+                },
+            }}
+            iframeClassName="h-full w-full"
+            onEnd={handleVideoEnd}
+        />
+    </div>
+) : (
 
                                         <div className="flex aspect-video items-center justify-center">
 
@@ -1289,7 +1339,7 @@ const LearnCourse = () => {
 
             </main>
 
-            <Footer />
+            {/* <Footer /> */}
         </>
     );
 };

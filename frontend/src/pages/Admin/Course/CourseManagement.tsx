@@ -4,11 +4,13 @@ import CourseTable from "../../../components/course/CourseTable";
 import CourseModal from "../../../components/course/CourseModal";
 import CourseForm from "../../../components/course/CourseForm";
 import { useSearch } from "../../../context/SearchContext";
+import Swal from "sweetalert2";
 import {
     FaBook,
     FaCheckCircle,
     FaClock,
     FaRupeeSign,
+    FaSearch,
 } from "react-icons/fa";
 
 const CourseManagement = () => {
@@ -16,6 +18,7 @@ const CourseManagement = () => {
     const [courses, setCourses] = useState<any[]>([]);
     const [openModal, setOpenModal] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<any>(null);
+    const [courseSearch, setCourseSearch] = useState("");
 
     const loadCourses = async () => {
         try {
@@ -40,7 +43,7 @@ const CourseManagement = () => {
         (sum, course) => sum + Number(course.price || 0),
         0
     );
-    const { search } = useSearch();
+    // const { search } = useSearch();
 
     return (
         <div>
@@ -180,20 +183,37 @@ const CourseManagement = () => {
 
             </div>
 
-            <CourseTable
-                courses={courses.filter((course) =>
-                    course.title
-                        .toLowerCase()
-                        .includes(search.toLowerCase()) ||
+            {/* ================= COURSE SEARCH ================= */}
 
-                    course.category
-                        .toLowerCase()
-                        .includes(search.toLowerCase()) ||
+            <div className="mb-5">
 
-                    course.instructor
-                        .toLowerCase()
-                        .includes(search.toLowerCase())
-                )}
+                <div className="relative max-w-md">
+
+                    <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+
+                    <input
+                        type="text"
+                        value={courseSearch}
+                        onChange={(e) => setCourseSearch(e.target.value)}
+                        placeholder="Search courses..."
+                        className="w-full rounded-xl border border-white/10 bg-[#161122] py-3 pl-11 pr-4 text-sm text-white outline-none transition focus:border-purple-500 placeholder:text-gray-500"
+                    />
+
+                </div>
+
+            </div>
+
+           
+                <CourseTable
+    courses={courses.filter((course) => {
+                    const searchTerm = courseSearch.toLowerCase();
+
+                    return (
+                        course.title?.toLowerCase().includes(searchTerm) ||
+                        course.category?.toLowerCase().includes(searchTerm) ||
+                        course.instructor?.toLowerCase().includes(searchTerm)
+                    );
+                })}
                 onAddCourse={() => {
                     setSelectedCourse(null);
                     setOpenModal(true);
@@ -203,29 +223,59 @@ const CourseManagement = () => {
                     setOpenModal(true);
                 }}
                 onDelete={async (id) => {
+                    const result = await Swal.fire({
+                        icon: "warning",
+                        title: "Delete Course?",
+                        text: "Are you sure you want to delete this course? This action cannot be undone.",
+                        background: "#161122",
+                        color: "#ffffff",
 
-                    const ok = window.confirm(
-                        "Delete this course?"
-                    );
+                        showCancelButton: true,
 
-                    if (!ok) return;
+                        confirmButtonText: "Yes, Delete",
+                        cancelButtonText: "Cancel",
 
-                    try {
+                        confirmButtonColor: "#dc2626",
+                        cancelButtonColor: "#374151",
 
-                        await deleteCourse(id);
+                        reverseButtons: true,
+                        focusCancel: true,
+                    });
 
-                        loadCourses();
-
-                        alert("Course Deleted Successfully");
-
-                    } catch (error) {
-
-                        console.error(error);
-
-                        alert("Delete Failed");
-
+                    if (!result.isConfirmed) {
+                        return;
                     }
 
+                    try {
+                        await deleteCourse(id);
+
+                        await loadCourses();
+
+                        await Swal.fire({
+                            icon: "success",
+                            title: "Deleted!",
+                            text: "Course deleted successfully.",
+                            background: "#161122",
+                            color: "#ffffff",
+
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+
+                    } catch (error) {
+                        console.error(error);
+
+                        await Swal.fire({
+                            icon: "error",
+                            title: "Delete Failed",
+                            text: "Unable to delete the course. Please try again.",
+                            background: "#161122",
+                            color: "#ffffff",
+
+                            confirmButtonColor: "#4f46e5",
+                            confirmButtonText: "OK",
+                        });
+                    }
                 }}
             />
 

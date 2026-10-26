@@ -9,6 +9,72 @@ from models.course_model import Course
 from models.module_model import Module
 
 
+def mark_lesson_accessed(
+    db: Session,
+    user_id,
+    course_id,
+    lesson_id,
+):
+    course = (
+        db.query(Course)
+        .filter(Course.id == course_id)
+        .first()
+    )
+
+    if not course:
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found",
+        )
+
+    lesson = (
+        db.query(Lesson)
+        .join(
+            Module,
+            Lesson.module_id == Module.id,
+        )
+        .filter(
+            Lesson.id == lesson_id,
+            Module.course_id == course_id,
+        )
+        .first()
+    )
+
+    if not lesson:
+        raise HTTPException(
+            status_code=404,
+            detail="Lesson not found for this course",
+        )
+
+    progress = (
+        db.query(LessonProgress)
+        .filter(
+            LessonProgress.user_id == user_id,
+            LessonProgress.course_id == course_id,
+            LessonProgress.lesson_id == lesson_id,
+        )
+        .first()
+    )
+
+    if progress:
+        progress.updated_at = datetime.utcnow()
+
+    else:
+        progress = LessonProgress(
+            user_id=user_id,
+            course_id=course_id,
+            lesson_id=lesson_id,
+            is_completed=False,
+            completed_at=None,
+        )
+
+        db.add(progress)
+
+    db.commit()
+    db.refresh(progress)
+
+    return progress
+
 def mark_lesson_completed(
     db: Session,
     user_id,
@@ -51,6 +117,7 @@ def mark_lesson_completed(
         db.query(LessonProgress)
         .filter(
             LessonProgress.user_id == user_id,
+            LessonProgress.course_id == course_id,
             LessonProgress.lesson_id == lesson_id,
         )
         .first()
@@ -127,6 +194,25 @@ def get_course_progress(
         and completed_lessons >= total_lessons
     )
 
+
+    last_progress = (
+        db.query(LessonProgress)
+        .filter(
+            LessonProgress.user_id == user_id,
+            LessonProgress.course_id == course_id,
+        )
+        .order_by(
+            LessonProgress.updated_at.desc()
+        )
+        .first()
+    )
+
+    last_lesson_id = (
+        last_progress.lesson_id
+        if last_progress
+        else None
+    )
+
     return {
         "course_id": course_id,
         "total_lessons": total_lessons,
@@ -134,4 +220,5 @@ def get_course_progress(
         "completed_lesson_list": completed_lesson_list,
         "progress_percentage": progress,
         "is_completed": is_completed,
+        "last_lesson_id": last_lesson_id,
     }

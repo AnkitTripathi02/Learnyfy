@@ -14,7 +14,7 @@ class LessonProgressResponse(BaseModel):
     course_id: UUID
     lesson_id: UUID
     is_completed: bool
-    completed_at: Optional[datetime]
+    completed_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -34,3 +34,4 @@ class CourseProgressResponse(BaseModel):
     completed_lesson_list: list[CompletedLesson]
     progress_percentage: int
     is_completed: bool
+    last_lesson_id: UUID | None = None
