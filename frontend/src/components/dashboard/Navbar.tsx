@@ -1,6 +1,5 @@
 import {
   FaBell,
-  FaSearch,
   FaBars,
   FaCheck,
   FaCheckDouble,
@@ -8,7 +7,6 @@ import {
 } from "react-icons/fa";
 
 import { useLocation } from "react-router-dom";
-import { useSearch } from "../../context/SearchContext";
 import {
   useState,
   Dispatch,
@@ -69,7 +67,6 @@ const Navbar = ({
     localStorage.getItem("user") || "{}"
   );
 
-  const { search, setSearch } = useSearch();
 
   const [openProfile, setOpenProfile] =
     useState(false);

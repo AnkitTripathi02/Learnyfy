@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 interface Props {
@@ -14,7 +13,6 @@ const CourseTable = ({
     onDelete,
     onAddCourse,
 }: Props) => {
-    const navigate = useNavigate();
 
     return (
         <div className="rounded-2xl border border-[#2c2545] bg-[#161122] shadow-lg overflow-hidden">

@@ -12,7 +12,6 @@ import {
     FaChartLine,
     FaServer,
     FaDatabase,
-    FaCloud,
     FaArrowUp,
     FaArrowRight,
 } from "react-icons/fa";

@@ -8,10 +8,7 @@ import {
   FaChartLine,
   FaFileInvoice,
   FaSearch,
-  FaPlayCircle,
   FaTrophy,
-  FaUser,
-  FaCog,
 } from "react-icons/fa";
 
 import { useNavigate, useLocation } from "react-router-dom";

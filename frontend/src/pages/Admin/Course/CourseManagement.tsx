@@ -3,7 +3,6 @@ import { getCourses, deleteCourse } from "../../../api/courseApi";
 import CourseTable from "../../../components/course/CourseTable";
 import CourseModal from "../../../components/course/CourseModal";
 import CourseForm from "../../../components/course/CourseForm";
-import { useSearch } from "../../../context/SearchContext";
 import Swal from "sweetalert2";
 import {
     FaBook,
