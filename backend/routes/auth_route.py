@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from schemas.auth_schema import UserSignup, UserLogin
-from services.auth_service import signup_user, login_user
+from schemas.auth_schema import UserSignup, UserLogin, GoogleLoginRequest
+from services.auth_service import signup_user, login_user, google_login_user
 from utils.response import success_response
 
 router = APIRouter()
@@ -40,5 +40,18 @@ def login(
 
     return success_response(
         message="Login successful.",
+        data=result,
+    )
+
+
+@router.post("/google")
+def google_login(
+    request: GoogleLoginRequest,
+    db: Session = Depends(get_db),
+):
+    result = google_login_user(db, request.access_token)
+
+    return success_response(
+        message="Google login successful.",
         data=result,
     )

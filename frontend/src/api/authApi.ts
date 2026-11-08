@@ -16,3 +16,8 @@ export const login = async (data: {
   const response = await axiosInstance.post("/auth/login", data);
   return response.data;
 };
+
+export const loginWithGoogle = async (accessToken: string) => {
+  const response = await axiosInstance.post("/auth/google", { access_token: accessToken });
+  return response.data;
+};

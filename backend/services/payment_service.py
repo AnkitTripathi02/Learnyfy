@@ -1,9 +1,17 @@
 import razorpay
 from config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
 
-client = razorpay.Client(
-    auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)
-)
+
+def _get_client():
+    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+        raise RuntimeError(
+            "Razorpay is not configured. Set RAZORPAY_KEY_ID and "
+            "RAZORPAY_KEY_SECRET in backend/.env."
+        )
+
+    return razorpay.Client(
+        auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)
+    )
 
 
 def create_razorpay_order(
@@ -12,7 +20,7 @@ def create_razorpay_order(
 ):
     amount_in_paise = int(amount * 100)
 
-    order = client.order.create({
+    order = _get_client().order.create({
         "amount": amount_in_paise,
         "currency": "INR",
         "receipt": receipt,
@@ -27,7 +35,7 @@ def verify_razorpay_payment(
     razorpay_payment_id: str,
     razorpay_signature: str,
 ):
-    client.utility.verify_payment_signature({
+    _get_client().utility.verify_payment_signature({
         "razorpay_order_id": razorpay_order_id,
         "razorpay_payment_id": razorpay_payment_id,
         "razorpay_signature": razorpay_signature,

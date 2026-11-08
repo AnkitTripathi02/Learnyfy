@@ -7,6 +7,7 @@ from models.lesson_progress_model import LessonProgress
 from models.lesson_model import Lesson
 from models.course_model import Course
 from models.module_model import Module
+from services.notification_service import create_notification
 
 
 def mark_lesson_accessed(
@@ -123,6 +124,8 @@ def mark_lesson_completed(
         .first()
     )
 
+    already_completed = bool(progress and progress.is_completed)
+
     if progress:
 
         progress.is_completed = True
@@ -139,6 +142,15 @@ def mark_lesson_completed(
         )
 
         db.add(progress)
+
+    if not already_completed:
+        create_notification(
+            db,
+            user_id,
+            "Lesson completed",
+            f'You completed "{lesson.title}" in {course.title}.',
+            "success",
+        )
 
     db.commit()
     db.refresh(progress)

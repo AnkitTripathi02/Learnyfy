@@ -15,6 +15,12 @@ import {
 } from "react";
 
 import ProfileDrawer from "../profile/ProfileDrawer";
+import {
+  deleteNotification as deleteNotificationRequest,
+  getNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "../../api/notificationApi";
 
 interface NavbarProps {
   collapsed: boolean;
@@ -26,36 +32,26 @@ interface Notification {
   title: string;
   message: string;
   time: string;
+  created_at: string | null;
   type: "success" | "info" | "warning";
   read: boolean;
 }
 
-const defaultNotifications: Notification[] = [
-  {
-    id: 1,
-    title: "Welcome to LearnyFy 🎓",
-    message: "Your learning journey starts here.",
-    time: "Just now",
-    type: "info",
-    read: false,
-  },
-  {
-    id: 2,
-    title: "Course Update",
-    message: "New courses are available for you.",
-    time: "10 min ago",
-    type: "success",
-    read: false,
-  },
-  {
-    id: 3,
-    title: "Keep Learning 🚀",
-    message: "Continue your pending courses.",
-    time: "1 hour ago",
-    type: "warning",
-    read: true,
-  },
-];
+const formatNotificationTime = (date: string | null) => {
+  if (!date) return "Just now";
+
+  const elapsed = Math.max(0, Date.now() - new Date(date).getTime());
+  const minutes = Math.floor(elapsed / 60_000);
+
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hr ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+};
 
 const Navbar = ({
   collapsed,
@@ -75,27 +71,40 @@ const Navbar = ({
     useState(false);
 
   const [notifications, setNotifications] =
-    useState<Notification[]>(() => {
-      const saved =
-        localStorage.getItem(
-          "learnyfy_notifications"
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : defaultNotifications;
-    });
-
-  /* ==========================================
-     SAVE NOTIFICATIONS
-  ========================================== */
+    useState<Notification[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem(
-      "learnyfy_notifications",
-      JSON.stringify(notifications)
-    );
-  }, [notifications]);
+    let active = true;
+
+    const loadNotifications = async () => {
+      try {
+        const response = await getNotifications();
+        const rows = response?.data ?? response;
+
+        if (active && Array.isArray(rows)) {
+          setNotifications(
+            rows.map((notification) => ({
+              ...notification,
+              time: formatNotificationTime(notification.created_at),
+            }))
+          );
+        }
+      } catch {
+        if (active) setNotifications([]);
+      } finally {
+        if (active) setNotificationsLoading(false);
+      }
+    };
+
+    void loadNotifications();
+    const intervalId = window.setInterval(loadNotifications, 30_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   /* ==========================================
      PAGE TITLE
@@ -182,6 +191,7 @@ const Navbar = ({
           : notification
       )
     );
+    void markNotificationRead(id).catch(() => undefined);
   };
 
   /* ==========================================
@@ -195,6 +205,7 @@ const Navbar = ({
         read: true,
       }))
     );
+    void markAllNotificationsRead().catch(() => undefined);
   };
 
   /* ==========================================
@@ -208,6 +219,7 @@ const Navbar = ({
           notification.id !== id
       )
     );
+    void deleteNotificationRequest(id).catch(() => undefined);
   };
 
   return (
@@ -221,21 +233,29 @@ const Navbar = ({
         <div className="flex items-center gap-6">
 
           <button
+            type="button"
+            aria-label="Toggle sidebar"
             onClick={() =>
               setCollapsed(!collapsed)
             }
             className="
+              dashboard-icon-control
               flex
               h-11
               w-11
               items-center
               justify-center
               rounded-xl
-              bg-[#1b1a2b]
-              text-gray-300
+              bg-gray-100
+              text-gray-600
+              dark:bg-[#1b1a2b]
+              dark:text-gray-300
               transition-all
               duration-300
-              hover:text-white
+              hover:bg-gray-200
+              hover:text-gray-900
+              dark:hover:bg-[#25233b]
+              dark:hover:text-white
               hover:shadow-lg
             "
           >
@@ -300,22 +320,28 @@ const Navbar = ({
           <div className="relative">
 
             <button
+              type="button"
+              aria-label="Toggle notifications"
+              aria-expanded={openNotifications}
               onClick={() =>
                 setOpenNotifications(
                   (prev) => !prev
                 )
               }
               className="
+                dashboard-icon-control
                 relative
                 rounded-xl
-                bg-[#1b1a2b]
+                bg-gray-100
+                dark:bg-[#1b1a2b]
                 p-3
                 transition
-                hover:bg-[#25233b]
+                hover:bg-gray-200
+                dark:hover:bg-[#25233b]
               "
             >
 
-              <FaBell className="text-xl text-gray-300" />
+              <FaBell className="text-xl text-gray-600 dark:text-gray-300" />
 
               {/* UNREAD BADGE */}
 
@@ -429,11 +455,15 @@ const Navbar = ({
                       </div>
 
                       <p className="font-medium text-white">
-                        No notifications
+                        {notificationsLoading
+                          ? "Loading notifications..."
+                          : "No notifications"}
                       </p>
 
                       <p className="mt-1 text-center text-xs text-gray-500">
-                        You're all caught up!
+                        {notificationsLoading
+                          ? "Checking for recent activity."
+                          : "You're all caught up!"}
                       </p>
 
                     </div>

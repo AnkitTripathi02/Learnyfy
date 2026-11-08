@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --app-page: #090817;
+  --app-text: #f8fafc;
+  --app-surface: #111827;
+  --app-border: #273244;
+}
+
+html:not(.dark) {
+  color-scheme: light;
+  --app-page: #f3f5fa;
+  --app-text: #182230;
+  --app-surface: #ffffff;
+  --app-border: #e1e5ed;
+}
+
 /* ===========================
    SweetAlert Premium Theme
 =========================== */
@@ -42,37 +58,170 @@
 
 html {
   scroll-behavior: smooth;
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--app-page);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--app-page);
+  color: var(--app-text);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+html:not(.dark) body,
+html:not(.dark) #root {
+  background-color: var(--app-page);
+  color: var(--app-text);
+}
+
+html:not(.dark) [class*="bg-[#"]:not(button) {
+  background-color: var(--app-surface) !important;
+}
+
+html:not(.dark) [class*="from-[#"] {
+  --tw-gradient-from: #ffffff var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
+}
+
+html:not(.dark) [class*="via-[#"] {
+  --tw-gradient-via: #f8f9fc var(--tw-gradient-via-position);
+}
+
+html:not(.dark) [class*="to-[#"] {
+  --tw-gradient-to: #eef1f7 var(--tw-gradient-to-position);
+}
+
+html:not(.dark) [class*="text-white"]:not(button):not([class*="bg-gradient"]) {
+  color: #182230 !important;
+}
+
+html:not(.dark) .profile-drawer-item,
+html:not(.dark) .profile-drawer-item span {
+  color: #273244 !important;
+}
+
+html:not(.dark) .profile-drawer-item svg {
+  color: #526175 !important;
+}
+
+html:not(.dark) .profile-drawer-item:hover,
+html:not(.dark) .profile-drawer-item:hover span,
+html:not(.dark) .profile-drawer-item:hover svg {
+  color: #ffffff !important;
+}
+
+html:not(.dark) [class*="text-slate-1"],
+html:not(.dark) [class*="text-slate-2"],
+html:not(.dark) [class*="text-slate-3"],
+html:not(.dark) [class*="text-gray-1"],
+html:not(.dark) [class*="text-gray-2"],
+html:not(.dark) [class*="text-gray-3"] {
+  color: #293548 !important;
+}
+
+html:not(.dark) [class*="text-slate-4"],
+html:not(.dark) [class*="text-slate-5"],
+html:not(.dark) [class*="text-gray-4"],
+html:not(.dark) [class*="text-gray-5"] {
+  color: #606b7a !important;
+}
+
+html:not(.dark) [class*="text-purple-3"],
+html:not(.dark) [class*="text-purple-4"],
+html:not(.dark) [class*="text-indigo-3"],
+html:not(.dark) [class*="text-cyan-3"] {
+  color: #6841a5 !important;
+}
+
+html:not(.dark) [class*="text-blue-4"] {
+  color: #2563eb !important;
+}
+
+html:not(.dark) [class*="text-green-4"] {
+  color: #15803d !important;
+}
+
+html:not(.dark) [class*="text-yellow-4"] {
+  color: #a16207 !important;
+}
+
+html:not(.dark) [class*="border-white/"],
+html:not(.dark) [class*="border-[#"] {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) [class*="hover:bg-[#"]:hover {
+  background-color: #edf0f6 !important;
+}
+
+html:not(.dark) .dashboard-icon-control {
+  background-color: #eef1f7 !important;
+  border: 1px solid #dfe4ec;
+  color: #536174 !important;
+  box-shadow: 0 2px 8px rgb(24 34 48 / 8%);
+}
+
+html:not(.dark) .dashboard-icon-control:hover {
+  background-color: #e3e8f0 !important;
+  color: #263449 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  color-scheme: light;
+}
+
+html:not(.dark) .swal2-popup {
+  background: #ffffff !important;
+  border-color: #e1e5ed !important;
+  color: #182230 !important;
+}
+
+html:not(.dark) .swal2-title,
+html:not(.dark) .swal2-html-container {
+  color: #182230 !important;
+}
+
+@media (min-height: 850px) {
+  .auth-screen-inner {
+    align-items: center;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
 
 /* Chrome Edge */
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 ::-webkit-scrollbar-track {
-  background: #120f1f;
-  border-radius: 20px;
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    #8b5cf6,
-    #6366f1
-  );
-  border-radius: 20px;
-  border: 2px solid #120f1f;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    #a855f7,
-    #7c3aed
-  );
+  display: none;
 }
 
 .no-scrollbar::-webkit-scrollbar {

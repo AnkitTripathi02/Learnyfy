@@ -3,6 +3,7 @@ from fastapi import HTTPException
 
 from models.course_model import Course
 from models.enrollment_model import Enrollment
+from services.notification_service import create_notification
 
 from datetime import datetime, timezone, timedelta
 
@@ -104,6 +105,13 @@ def enroll_course(
     )
 
     db.add(enrollment)
+    create_notification(
+        db,
+        user_id,
+        "Enrollment confirmed",
+        f"You are now enrolled in {course.title}.",
+        "success",
+    )
     db.commit()
     db.refresh(enrollment)
 

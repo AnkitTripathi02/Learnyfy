@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from uuid import UUID
 
 from database import get_db
-from config import RAZORPAY_KEY_ID
+from config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
 
 from services.payment_service import (
     create_razorpay_order,
@@ -15,6 +15,7 @@ from models.course_model import Course
 from models.payment_model import Payment
 from models.enrollment_model import Enrollment
 from models.user_model import User
+from services.notification_service import create_notification
 
 router = APIRouter(
     prefix="/payments",
@@ -33,6 +34,18 @@ class VerifyPaymentRequest(BaseModel):
     razorpay_signature: str
     course_id: UUID
     user_id: UUID
+
+
+def _require_razorpay_credentials():
+    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Payments are not configured. Set matching "
+                "RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET values in "
+                "backend/.env, then restart the backend."
+            ),
+        )
 
 
 @router.post("/create-order")
@@ -58,6 +71,8 @@ def create_order(
             status_code=400,
             detail="This course is free",
         )
+
+    _require_razorpay_credentials()
 
     try:
 
@@ -90,9 +105,13 @@ def create_order(
         print("Create order error:", error)
 
         raise HTTPException(
-            status_code=500,
-            detail="Unable to create payment order",
-        )
+            status_code=502,
+            detail=(
+                "Razorpay could not create the order. Check that the key ID "
+                "and secret are a matching pair from the same Razorpay mode "
+                "(test or live), then restart the backend."
+            ),
+        ) from error
 
 
 @router.post("/verify")
@@ -100,6 +119,8 @@ def verify_payment(
     data: VerifyPaymentRequest,
     db: Session = Depends(get_db),
 ):
+
+    _require_razorpay_credentials()
 
     try:
 
@@ -123,6 +144,7 @@ def verify_payment(
                 detail="Payment not found",
             )
 
+        already_paid = payment.status == "paid"
         payment.razorpay_payment_id = data.razorpay_payment_id
         payment.razorpay_signature = data.razorpay_signature
         payment.status = "paid"
@@ -144,6 +166,20 @@ def verify_payment(
             )
 
             db.add(enrollment)
+
+        if not already_paid:
+            course = (
+                db.query(Course)
+                .filter(Course.id == data.course_id)
+                .first()
+            )
+            create_notification(
+                db,
+                data.user_id,
+                "Payment successful",
+                f"Your payment for {course.title if course else 'your course'} was confirmed.",
+                "success",
+            )
 
         db.commit()
 

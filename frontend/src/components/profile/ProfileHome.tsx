@@ -104,7 +104,7 @@ const ProfileHome = ({
 
           <button
             onClick={() => onNavigate("profile")}
-            className="group flex w-full items-center justify-between rounded-xl border border-white/10 text-white p-4 text-left transition hover:border-purple-500/40 hover:bg-purple-600/10"
+            className="group flex w-full items-center justify-between rounded-xl border border-white/10 p-4 text-left text-gray-700 transition hover:border-purple-500/40 hover:bg-purple-600/10 dark:text-white"
           >
             <div className="flex items-center gap-4">
 
@@ -131,7 +131,7 @@ const ProfileHome = ({
 
           <button
             onClick={() => onNavigate("security")}
-            className="group flex w-full items-center justify-between rounded-xl border border-white/10 text-white p-4 text-left transition hover:border-blue-500/40 hover:bg-blue-600/10"
+            className="group flex w-full items-center justify-between rounded-xl border border-white/10 p-4 text-left text-gray-700 transition hover:border-blue-500/40 hover:bg-blue-600/10 dark:text-white"
           >
             <div className="flex items-center gap-4">
 
@@ -158,7 +158,7 @@ const ProfileHome = ({
 
           <button
             onClick={() => onNavigate("settings")}
-            className="group flex w-full items-center justify-between rounded-xl border border-white/10 text-white p-4 text-left transition hover:border-yellow-500/40 hover:bg-yellow-600/10"
+            className="group flex w-full items-center justify-between rounded-xl border border-white/10 p-4 text-left text-gray-700 transition hover:border-yellow-500/40 hover:bg-yellow-600/10 dark:text-white"
           >
             <div className="flex items-center gap-4">
 
@@ -187,7 +187,7 @@ const ProfileHome = ({
             onClick={() =>
               onNavigate("notifications")
             }
-            className="group flex w-full items-center justify-between rounded-xl border border-white/10 text-white p-4 text-left transition hover:border-green-500/40 hover:bg-green-600/10"
+            className="group flex w-full items-center justify-between rounded-xl border border-white/10 p-4 text-left text-gray-700 transition hover:border-green-500/40 hover:bg-green-600/10 dark:text-white"
           >
             <div className="flex items-center gap-4">
 

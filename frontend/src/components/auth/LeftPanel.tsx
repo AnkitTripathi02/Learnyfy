@@ -4,11 +4,11 @@ interface LeftPanelProps {
 
 const LeftPanel = ({ showSignup }: LeftPanelProps) => {
   return (
-    <div className="hidden lg:flex flex-col justify-start pt-24 pl-36 pr-10 text-white relative overflow-hidden">
+    <div className="relative hidden overflow-hidden pl-8 pr-6 pt-12 text-white lg:flex lg:flex-col lg:justify-center xl:pl-20 xl:pr-10 xl:pt-20">
 
       {/* Badge */}
       <span
-        className={`inline-block px-6 py-2 my-14 rounded-full text-md w-fit transition-all duration-700 ${showSignup
+        className={`my-8 inline-block w-fit rounded-full px-5 py-2 text-sm transition-all duration-700 lg:text-base ${showSignup
             ? "bg-green-600/20 text-green-300"
             : "bg-purple-700/20 text-purple-300"
           }`}
@@ -28,7 +28,7 @@ const LeftPanel = ({ showSignup }: LeftPanelProps) => {
               : "translate-y-0 opacity-100"
             }`}
         >
-          <h1 className="text-6xl font-bold leading-[1.1]">
+          <h1 className="text-5xl font-bold leading-[1.1] xl:text-6xl">
             Learn.
             <br />
             <span className="text-purple-500">
@@ -46,7 +46,7 @@ const LeftPanel = ({ showSignup }: LeftPanelProps) => {
               : "translate-y-16 opacity-0"
             }`}
         >
-          <h1 className="text-6xl font-bold leading-[1.1]">
+          <h1 className="text-5xl font-bold leading-[1.1] xl:text-6xl">
             Join.
             <br />
             <span className="text-green-400">
@@ -67,7 +67,7 @@ const LeftPanel = ({ showSignup }: LeftPanelProps) => {
         ].map((item, index) => (
           <p
             key={index}
-            className={`absolute transition-all duration-700 text-gray-400 text-3xl max-w-md ${item.isVisible
+            className={`absolute max-w-md text-xl text-gray-400 transition-all duration-700 xl:text-3xl ${item.isVisible
                 ? "translate-y-0 opacity-100"
                 : `${item.direction} opacity-0`
               }`}

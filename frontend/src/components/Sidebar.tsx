@@ -6,11 +6,14 @@ import {
   FaCalendarAlt,
   FaTrophy,
   FaMoon,
+  FaSun,
   FaBars,
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { darkMode, setDarkMode } = useTheme();
 
   const menuItems = [
     {
@@ -89,11 +92,15 @@ const Sidebar = () => {
 
       <div className="mt-auto p-4 border-t border-white/10">
 
-        <button className="w-full flex items-center justify-center gap-3 rounded-xl bg-purple-600 py-3 text-white hover:bg-purple-500 transition">
-
-          <FaMoon />
-
-          {isOpen && <span>Dark Mode</span>}
+        <button
+          type="button"
+          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          aria-pressed={darkMode}
+          onClick={() => setDarkMode(!darkMode)}
+          className="flex w-full items-center justify-center gap-3 rounded-xl bg-purple-600 py-3 text-white transition hover:bg-purple-500"
+        >
+          {darkMode ? <FaSun /> : <FaMoon />}
+          {isOpen && <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>}
 
         </button>
 

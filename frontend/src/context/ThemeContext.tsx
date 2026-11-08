@@ -20,7 +20,7 @@ export const ThemeProvider = ({
 }) => {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem("darkMode");
-    return saved ? JSON.parse(saved) : true;
+    return saved === null || saved === "true";
   });
 
   useEffect(() => {
@@ -29,11 +29,8 @@ export const ThemeProvider = ({
       JSON.stringify(darkMode)
     );
 
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", darkMode);
+    document.documentElement.style.colorScheme = darkMode ? "dark" : "light";
   }, [darkMode]);
 
   return (

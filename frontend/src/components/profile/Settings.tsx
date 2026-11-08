@@ -61,6 +61,7 @@ const {
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={enabled}
       className={`relative h-6 w-11 rounded-full transition ${enabled
           ? "bg-purple-600"
           : "bg-gray-700"

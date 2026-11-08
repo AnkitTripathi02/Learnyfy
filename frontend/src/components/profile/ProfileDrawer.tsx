@@ -63,7 +63,7 @@ const user = JSON.parse(
   };
 
   const menuItem =
-    "group flex w-full items-center justify-between rounded-xl text-white px-4 py-3.5 text-white transition-all duration-300 hover:translate-x-1 hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600";
+    "profile-drawer-item group flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-gray-700 transition-all duration-300 hover:translate-x-1 hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 dark:text-white";
 
   const renderContent = () => {
     switch (activeTab) {
