@@ -8,6 +8,32 @@ import { loginWithGoogle } from "../../api/authApi";
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const GoogleAuthButton = () => {
+  if (!googleClientId) {
+    return (
+      <button
+        type="button"
+        onClick={() =>
+          void Swal.fire({
+            icon: "warning",
+            title: "Google sign-in needs setup",
+            text: "Create a Google OAuth Web client, then set its client ID in frontend/.env as VITE_GOOGLE_CLIENT_ID and backend/.env as GOOGLE_CLIENT_ID. Restart both servers afterward.",
+            background: "#161122",
+            color: "#ffffff",
+            confirmButtonColor: "#8b5cf6",
+          })
+        }
+        className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 text-sm font-medium text-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition duration-200 hover:-translate-y-0.5 hover:border-purple-200/30 hover:bg-white/[0.07] hover:text-white"
+      >
+        <FcGoogle className="text-lg" />
+        Continue with Google
+      </button>
+    );
+  }
+
+  return <ConfiguredGoogleAuthButton />;
+};
+
+const ConfiguredGoogleAuthButton = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -68,32 +94,10 @@ const GoogleAuthButton = () => {
   });
 
   const handleClick = () => {
-    if (!googleClientId || loading) return;
+    if (loading) return;
     setLoading(true);
     startGoogleLogin();
   };
-
-  if (!googleClientId) {
-    return (
-      <button
-        type="button"
-        onClick={() =>
-          void Swal.fire({
-            icon: "warning",
-            title: "Google sign-in needs setup",
-            text: "Create a Google OAuth Web client, then set its client ID in frontend/.env as VITE_GOOGLE_CLIENT_ID and backend/.env as GOOGLE_CLIENT_ID. Restart both servers afterward.",
-            background: "#161122",
-            color: "#ffffff",
-            confirmButtonColor: "#8b5cf6",
-          })
-        }
-        className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] px-4 py-3 text-sm font-medium text-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.16)] transition duration-200 hover:-translate-y-0.5 hover:border-purple-200/30 hover:bg-white/[0.07] hover:text-white"
-      >
-        <FcGoogle className="text-lg" />
-        Continue with Google
-      </button>
-    );
-  }
 
   return (
     <button

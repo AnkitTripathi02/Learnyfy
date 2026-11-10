@@ -33,17 +33,34 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("home");
 
-const user = JSON.parse(
-  localStorage.getItem("user") || "{}"
-);
+  const getStoredUser = () => {
+    try {
+      if (typeof window === "undefined") return {};
+
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return {};
+
+      const parsedUser = JSON.parse(storedUser);
+      return parsedUser && typeof parsedUser === "object" ? parsedUser : {};
+    } catch (error) {
+      console.warn("Failed to parse stored user:", error);
+      return {};
+    }
+  };
+
+  const user = getStoredUser();
 
   const initials =
-    user.full_name
-      ?.split(" ")
-      .map((x: string) => x[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "U";
+    (typeof user?.full_name === "string"
+      ? user.full_name
+          .trim()
+          .split(" ")
+          .filter(Boolean)
+          .map((x: string) => x[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2)
+      : "") || "U";
 
   const logout = () => {
     localStorage.removeItem("token");
