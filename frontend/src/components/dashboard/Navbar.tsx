@@ -111,6 +111,10 @@ const Navbar = ({
   ========================================== */
 
   const getPageTitle = () => {
+    if (location.pathname.startsWith("/dashboard/certificate/")) {
+      return "Certificate";
+    }
+
     switch (location.pathname) {
       case "/dashboard":
         return "Dashboard";
@@ -135,6 +139,12 @@ const Navbar = ({
 
       case "/dashboard/my-courses":
         return "My Courses";
+
+      case "/dashboard/progress":
+        return "My Progress";
+
+      case "/dashboard/certificates":
+        return "Certificates";
 
       case "/profile":
         return "Profile";

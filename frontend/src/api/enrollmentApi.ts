@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const BASE_URL = "http://127.0.0.1:8000/api";
+import axiosInstance from "./axiosInstance";
 
 
 // ============================================================
@@ -11,8 +9,8 @@ export const enrollCourse = (
     course_id: string,
     user_id: string
 ) => {
-    return axios.post(
-        `${BASE_URL}/courses/${course_id}/enroll`,
+    return axiosInstance.post(
+        `/courses/${course_id}/enroll`,
         {
             user_id,
         }
@@ -27,7 +25,7 @@ export const enrollCourse = (
 export const getMyCourses = (
     user_id: string
 ) => {
-    return axios.get(
-        `${BASE_URL}/my-courses/${user_id}`
+    return axiosInstance.get(
+        `/my-courses/${user_id}`
     );
 };

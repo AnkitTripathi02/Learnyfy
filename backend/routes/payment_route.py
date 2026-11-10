@@ -43,7 +43,7 @@ def _require_razorpay_credentials():
             detail=(
                 "Payments are not configured. Set matching "
                 "RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET values in "
-                "backend/.env, then restart the backend."
+                "the backend environment, then restart or redeploy the backend."
             ),
         )
 

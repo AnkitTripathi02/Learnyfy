@@ -216,7 +216,7 @@ const handleContinueLearning = () => {
 
                 {/* Progress */}
                 <button
-                    onClick={() => navigate("/my-progress")}
+                    onClick={() => navigate("/dashboard/progress")}
                     className="group flex items-center justify-between rounded-2xl border border-[#292440] bg-[#111021] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-500/40 hover:bg-[#15132a]"
                 >
                     <div className="flex items-center gap-4">

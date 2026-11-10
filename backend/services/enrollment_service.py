@@ -1,8 +1,12 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from models.course_model import Course
 from models.enrollment_model import Enrollment
+from models.lesson_model import Lesson
+from models.lesson_progress_model import LessonProgress
+from models.module_model import Module
 from services.notification_service import create_notification
 
 from datetime import datetime, timezone, timedelta
@@ -141,6 +145,36 @@ def get_my_courses(
         .all()
     )
 
+    lesson_totals = dict(
+        db.query(
+            Module.course_id,
+            func.count(Lesson.id),
+        )
+        .join(Lesson, Lesson.module_id == Module.id)
+        .join(Enrollment, Enrollment.course_id == Module.course_id)
+        .filter(Enrollment.user_id == user_id)
+        .group_by(Module.course_id)
+        .all()
+    )
+
+    completed_totals = dict(
+        db.query(
+            Module.course_id,
+            func.count(LessonProgress.id),
+        )
+        .join(Lesson, Lesson.module_id == Module.id)
+        .join(LessonProgress, LessonProgress.lesson_id == Lesson.id)
+        .join(Enrollment, Enrollment.course_id == Module.course_id)
+        .filter(
+            Enrollment.user_id == user_id,
+            LessonProgress.user_id == user_id,
+            LessonProgress.course_id == Module.course_id,
+            LessonProgress.is_completed.is_(True),
+        )
+        .group_by(Module.course_id)
+        .all()
+    )
+
     result = []
 
     for enrollment, course in records:
@@ -181,6 +215,13 @@ def get_my_courses(
         # =====================================================
         # RESPONSE
         # =====================================================
+        total_lessons = lesson_totals.get(course.id, 0)
+        completed_lessons = completed_totals.get(course.id, 0)
+        progress = (
+            round(completed_lessons / total_lessons * 100)
+            if total_lessons
+            else 0
+        )
 
         result.append({
             "id": enrollment.id,
@@ -189,8 +230,8 @@ def get_my_courses(
             "description": course.description,
             "thumbnail": course.thumbnail,
 
-            "progress": 0,
-            "is_completed": False,
+            "progress": progress,
+            "is_completed": total_lessons > 0 and completed_lessons >= total_lessons,
 
             "enrolled_at": enrollment.created_at,
             "expires_at": enrollment.expires_at,

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
+import axios from "axios";
 import { getCertificate } from "../api/certificateApi";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -16,6 +17,7 @@ const Certificate = () => {
 
     const [certificate, setCertificate] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
 useEffect(() => {
     if (id) {
@@ -51,10 +53,16 @@ useEffect(() => {
             );
 
             setCertificate(data);
-        } catch (err) {
-            console.log(err);
-            console.log("URL ID:", id);
-console.log("USER:", user);
+        } catch (requestError) {
+            console.error("Failed to load certificate:", requestError);
+            const detail = axios.isAxiosError(requestError)
+                ? requestError.response?.data?.detail
+                : null;
+            setError(
+                typeof detail === "string"
+                    ? detail
+                    : "Unable to load this certificate. Please try again."
+            );
         } finally {
             setLoading(false);
         }
@@ -77,7 +85,15 @@ console.log("USER:", user);
     if (!certificate) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                Certificate not found.
+                <div className="text-center">
+                    <p>{error || "Certificate not found."}</p>
+                    <button
+                        onClick={() => navigate("/dashboard/progress")}
+                        className="mt-5 rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-500"
+                    >
+                        Back to my progress
+                    </button>
+                </div>
             </div>
         );
     }
@@ -194,7 +210,7 @@ console.log("USER:", user);
                 <div className="mx-auto mt-8 flex max-w-5xl justify-center gap-5">
 
                     <button
-                        onClick={() => navigate("/my-courses")}
+                        onClick={() => navigate("/dashboard/my-courses")}
                         className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700"
                     >
                         <FaArrowLeft />

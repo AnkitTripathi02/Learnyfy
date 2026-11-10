@@ -6,7 +6,7 @@ def _get_client():
     if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
         raise RuntimeError(
             "Razorpay is not configured. Set RAZORPAY_KEY_ID and "
-            "RAZORPAY_KEY_SECRET in backend/.env."
+            "RAZORPAY_KEY_SECRET in the backend environment."
         )
 
     return razorpay.Client(

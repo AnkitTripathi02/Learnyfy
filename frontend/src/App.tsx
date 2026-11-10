@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route, useParams } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -27,6 +27,13 @@ import AdminPayments from "./pages/Admin/Payments/AdminPayments";
 import AdminAnalytics from "./pages/Admin/Analytics/AdminAnalytics";
 import AdminReports from "./pages/Admin/Reports/AdminReports";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
+import Progress from "./pages/Progress";
+import Certificates from "./pages/Certificates";
+
+const LegacyCertificateRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/dashboard/certificate/${id}`} replace />;
+};
 
 function App() {
   return (
@@ -65,7 +72,22 @@ function App() {
     />
 
     <Route
+      path="progress"
+      element={<Progress />}
+    />
+
+    <Route
+      path="certificates"
+      element={<Certificates />}
+    />
+
+    <Route
       path="learn/:id"
+      element={<LearnCourse />}
+    />
+
+    <Route
+      path="learn/:id/lesson/:lesson"
       element={<LearnCourse />}
     />
 
@@ -79,6 +101,16 @@ function App() {
       element={<Certificate />}
     />
   </Route>
+
+  <Route
+    path="/my-progress"
+    element={<Navigate to="/dashboard/progress" replace />}
+  />
+
+  <Route
+    path="/certificate/:id"
+    element={<LegacyCertificateRedirect />}
+  />
 
 
 

@@ -24,7 +24,8 @@ Replace the example email with the intended account's email. To revoke admin acc
 ## Razorpay payments
 
 1. In the Razorpay Dashboard, create or select API keys for test mode or live mode.
-2. Set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in `backend/.env`. Use the matching key pair from the same mode; do not commit real keys.
-3. Restart the backend after changing the environment file.
+2. Set `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in `backend/.env` for local development. For deployment, add both as environment variables in the backend hosting provider's settings; a local `.env` file is not deployed.
+3. Use a matching key pair from the same Razorpay mode (test or live), and never commit real keys.
+4. Restart the local backend or redeploy/restart the hosted backend after changing the variables.
 
 The frontend checkout uses the key ID returned by the backend. If the keys are missing, the order endpoint returns a configuration error. If Razorpay rejects the pair, verify the key ID and secret match and that the account is using the intended mode.

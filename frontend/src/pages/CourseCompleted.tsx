@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     FaCheckCircle,
     FaCertificate,
@@ -12,6 +12,7 @@ import Footer from "../components/home/Footer";
 const CourseCompleted = () => {
 
     const navigate = useNavigate();
+    const { id } = useParams();
 
     return (
         <>
@@ -76,13 +77,14 @@ const CourseCompleted = () => {
                     <div className="mt-10 flex flex-col gap-4">
 
                         <button
+                            onClick={() => navigate(`/dashboard/certificate/${id}`)}
                             className="rounded-xl bg-indigo-600 py-4 font-bold hover:bg-indigo-500"
                         >
-                            Download Certificate
+                            View Certificate
                         </button>
 
                         <button
-                            onClick={() => navigate("/my-courses")}
+                            onClick={() => navigate("/dashboard/my-courses")}
                             className="rounded-xl border border-white/10 py-4 hover:bg-white/5"
                         >
                             <FaBookOpen className="inline mr-2" />

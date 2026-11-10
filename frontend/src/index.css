@@ -169,6 +169,37 @@ html:not(.dark) [class*="hover:bg-[#"]:hover {
   background-color: #edf0f6 !important;
 }
 
+html:not(.dark) .learn-course-page {
+  background-color: #f4f6fb !important;
+  color: #182230;
+}
+
+html:not(.dark) .learn-course-header {
+  border-color: #e2e8f0 !important;
+  background-image: linear-gradient(120deg, #ffffff 0%, #f8faff 55%, #eef2ff 100%) !important;
+}
+
+html:not(.dark) .learn-course-progress,
+html:not(.dark) .learn-course-sidebar {
+  border-color: #e2e8f0 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 16px 40px rgb(24 34 48 / 8%);
+}
+
+html:not(.dark) .learn-course-module {
+  border-color: #e5eaf2 !important;
+  background-color: #f8faff !important;
+}
+
+html:not(.dark) .learn-course-page [class*="bg-white/"] {
+  background-color: #f4f6fb !important;
+}
+
+html:not(.dark) .learn-course-page [class*="text-gray-6"],
+html:not(.dark) .learn-course-page [class*="text-gray-7"] {
+  color: #64748b !important;
+}
+
 html:not(.dark) .dashboard-icon-control {
   background-color: #eef1f7 !important;
   border: 1px solid #dfe4ec;

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import YouTube from "react-youtube";
+import YouTube, { type YouTubeEvent } from "react-youtube";
 import {
     FaArrowLeft,
     FaArrowRight,
@@ -28,6 +28,49 @@ import { getCourseById } from "../api/courseApi";
 import { getModules } from "../api/moduleApi";
 import { getLessons } from "../api/lessonApi";
 
+const getYouTubeVideoId = (url: string): string | null => {
+    try {
+        const parsedUrl = new URL(url);
+        const hostname = parsedUrl.hostname.replace(/^www\./, "");
+        let videoId: string | null = null;
+
+        if (hostname === "youtu.be") {
+            videoId = parsedUrl.pathname.split("/").filter(Boolean)[0] || null;
+        } else if (
+            hostname === "youtube.com" ||
+            hostname.endsWith(".youtube.com") ||
+            hostname === "youtube-nocookie.com" ||
+            hostname.endsWith(".youtube-nocookie.com")
+        ) {
+            videoId =
+                parsedUrl.searchParams.get("v") ||
+                parsedUrl.pathname.match(/^\/(?:embed|shorts|live|v)\/([^/?]+)/)?.[1] ||
+                null;
+        }
+
+        return videoId && /^[\w-]{11}$/.test(videoId) ? videoId : null;
+    } catch {
+        return null;
+    }
+};
+
+const getYouTubePlaybackError = (errorCode: number) => {
+    switch (errorCode) {
+        case 2:
+            return "This video link is invalid. Update the lesson with a valid YouTube video URL.";
+        case 5:
+            return "YouTube could not play this video in the current browser. Try another browser or open it directly on YouTube.";
+        case 100:
+            return "This video is unavailable, private, or has been removed. Check its visibility and link.";
+        case 101:
+        case 150:
+            return "The video owner does not allow playback on other websites. Open it on YouTube or ask the owner to enable embedding.";
+        case 153:
+            return "YouTube could not verify the site's referrer. Check browser privacy settings or open the video directly on YouTube.";
+        default:
+            return "YouTube could not play this video. Check that it is available and embedding is enabled.";
+    }
+};
 
 const LearnCourse = () => {
     const { id, lesson: lessonId } = useParams();
@@ -51,6 +94,8 @@ const LearnCourse = () => {
     const [courseProgress, setCourseProgress] =
         useState<any>(null);
 
+    const [videoPlayerError, setVideoPlayerError] = useState<number | null>(null);
+
     const [completedLessons, setCompletedLessons] =
         useState<string[]>([]);
 
@@ -60,6 +105,10 @@ const LearnCourse = () => {
 useEffect(() => {
     loadCourse();
 }, [id, lessonId]);
+
+    useEffect(() => {
+        setVideoPlayerError(null);
+    }, [selectedLesson?.id]);
 
     useEffect(() => {
 
@@ -236,44 +285,6 @@ if (resumeLesson) {
     //    YOUTUBE EMBED URL
 
 
-    const getEmbedUrl = (url: string) => {
-        if (!url) return "";
-
-        try {
-            const parsedUrl = new URL(url);
-
-            /* youtube.com/watch?v= */
-            if (
-                parsedUrl.hostname.includes("youtube.com")
-            ) {
-                const videoId =
-                    parsedUrl.searchParams.get("v");
-
-                if (videoId) {
-                    return `https://www.youtube.com/embed/${videoId}`;
-                }
-            }
-
-            /* youtu.be/videoId */
-            if (
-                parsedUrl.hostname.includes("youtu.be")
-            ) {
-                const videoId =
-                    parsedUrl.pathname.replace("/", "");
-
-                if (videoId) {
-                    return `https://www.youtube.com/embed/${videoId}`;
-                }
-            }
-
-            /* Already embed URL */
-            return url;
-        } catch {
-            return url;
-        }
-    };
-
-
     //    ALL LESSONS
 
 
@@ -311,6 +322,10 @@ if (resumeLesson) {
         (module) =>
             module.id === selectedLesson?.moduleId
     );
+
+    const selectedVideoId = selectedLesson?.video_url
+        ? getYouTubeVideoId(selectedLesson.video_url)
+        : null;
 
 
     //    SELECT LESSON
@@ -476,7 +491,7 @@ const selectLesson = async (
             currentLessonIndex >= allLessons.length - 1
         ) {
             // Last lesson completed
-            navigate(`/certificate/${id}`);
+            navigate(`/dashboard/certificate/${id}`);
             return;
         }
 
@@ -506,7 +521,7 @@ const selectLesson = async (
             <>
                 {/* <Navbar /> */}
 
-                <main className="flex   items-center justify-center bg-[#07070c] px-6 text-white">
+                <main className="learn-course-page flex items-center justify-center bg-[#07070c] px-6 text-white">
                     <div className="text-center">
 
                         <div className="relative mx-auto h-20 w-20">
@@ -544,7 +559,7 @@ const selectLesson = async (
             <>
                 {/* <Navbar /> */}
 
-                <main className="flex   items-center justify-center bg-[#07070c] px-6 text-white">
+                <main className="learn-course-page flex items-center justify-center bg-[#07070c] px-6 text-white">
 
                     <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center shadow-2xl">
 
@@ -596,13 +611,13 @@ const selectLesson = async (
         <>
             {/* <Navbar /> */}
 
-            <main className="  bg-[#07070c] text-white">
+            <main className="learn-course-page bg-[#07070c] text-white">
 
                 {/* =================================================
                     COURSE HEADER
                 ================================================== */}
 
-                <section className="border-b border-white/10 bg-gradient-to-b from-[#11101d] via-[#0c0b14] to-[#07070c]">
+                <section className="learn-course-header border-b border-white/10 bg-gradient-to-b from-[#11101d] via-[#0c0b14] to-[#07070c]">
 
                     <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
 
@@ -683,7 +698,7 @@ const selectLesson = async (
 
                             {/* RIGHT PROGRESS */}
 
-                            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-5 shadow-xl">
+                            <div className="learn-course-progress rounded-3xl border border-white/10 bg-white/[0.035] p-5 shadow-xl">
 
                                 <div className="flex items-center justify-between">
 
@@ -743,7 +758,7 @@ const selectLesson = async (
 
                     <aside className="h-fit lg:sticky lg:top-24">
 
-                        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#0c0c13] shadow-2xl">
+                        <div className="learn-course-sidebar overflow-hidden rounded-3xl border border-white/10 bg-[#0c0c13] shadow-2xl">
 
                             {/* Sidebar Header */}
 
@@ -832,7 +847,7 @@ const selectLesson = async (
                                                     key={
                                                         module.id
                                                     }
-                                                    className="mb-2 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.015]"
+                                                    className="learn-course-module mb-2 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.015]"
                                                 >
 
                                                     {/* Module header */}
@@ -1060,12 +1075,26 @@ const selectLesson = async (
                                         </div>
                                     )}
 
-{selectedLesson.video_url ? (
+{selectedVideoId ? (
+    videoPlayerError !== null ? (
+        <div className="flex aspect-video flex-col items-center justify-center gap-4 bg-slate-100 px-6 text-center text-slate-900 dark:bg-gray-950 dark:text-white">
+            <FaPlayCircle className="text-4xl text-indigo-500" />
+            <p className="max-w-xl text-sm leading-6">
+                {getYouTubePlaybackError(videoPlayerError)}
+            </p>
+            <a
+                href={selectedLesson.video_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500"
+            >
+                Open video on YouTube
+            </a>
+        </div>
+    ) : (
     <div className="aspect-video w-full">
         <YouTube
-            videoId={
-                getEmbedUrl(selectedLesson.video_url).split("/embed/")[1]
-            }
+            videoId={selectedVideoId}
             opts={{
                 width: "100%",
                 height: "100%",
@@ -1075,8 +1104,13 @@ const selectLesson = async (
             }}
             iframeClassName="h-full w-full"
             onEnd={handleVideoEnd}
+            onError={(event: YouTubeEvent<number>) => {
+                console.error("YouTube playback error:", event.data);
+                setVideoPlayerError(event.data);
+            }}
         />
     </div>
+    )
 ) : (
 
                                         <div className="flex aspect-video items-center justify-center">
@@ -1086,7 +1120,7 @@ const selectLesson = async (
                                                 <FaPlayCircle className="mx-auto text-5xl text-gray-700" />
 
                                                 <p className="mt-4 text-sm text-gray-500">
-                                                    Video not available for this lesson.
+                                                    Add a valid YouTube video URL to make this lesson playable.
                                                 </p>
 
                                             </div>
