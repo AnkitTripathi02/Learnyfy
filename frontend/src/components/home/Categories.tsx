@@ -11,6 +11,7 @@ import {
   SiJavascript,
   SiDocker,
 } from "react-icons/si";
+import { Link } from "react-router-dom";
 
 const categories = [
   {
@@ -59,7 +60,7 @@ const Categories = () => {
   return (
     <section
       id="categories"
-      className="bg-gray-50 py-20"
+      className="bg-gradient-to-b from-indigo-50 via-white to-violet-50 py-20"
     >
       <div className="mx-auto max-w-7xl px-6">
 
@@ -81,24 +82,27 @@ const Categories = () => {
 
             <div
               key={index}
-              className="group rounded-2xl bg-white p-8 text-center shadow transition duration-300 hover:-translate-y-2 hover:bg-indigo-600 hover:text-white hover:shadow-xl"
+              className="group rounded-2xl border border-indigo-100/80 bg-white p-8 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:border-indigo-600 hover:bg-indigo-600 hover:text-white hover:shadow-xl"
             >
 
-              <div className="flex justify-center text-indigo-600 transition group-hover:text-white">
+              <div aria-hidden="true" className="flex justify-center text-indigo-600 transition group-hover:text-white">
                 {item.icon}
               </div>
 
-              <h3 className="mt-6 text-xl font-bold">
+              <h3 className="mt-6 text-xl font-bold text-gray-900 group-hover:text-white">
                 {item.title}
               </h3>
 
-              <p className="mt-2 text-gray-500 group-hover:text-indigo-100">
+              <p className="mt-2 text-gray-600 group-hover:text-indigo-100">
                 {item.courses}
               </p>
 
-              <button className="mt-6 rounded-lg border border-indigo-600 px-5 py-2 font-medium text-indigo-600 transition  hover:text-indigo-600 group-hover:border-white group-hover:text-white">
+              <Link
+                to={`/courses?category=${encodeURIComponent(item.title)}`}
+                className="mt-6 inline-block rounded-lg border border-indigo-600 px-5 py-2 font-medium text-indigo-600 transition hover:text-indigo-600 group-hover:border-white group-hover:text-white"
+              >
                 Explore
-              </button>
+              </Link>
 
             </div>
 

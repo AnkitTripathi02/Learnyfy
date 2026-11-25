@@ -18,8 +18,19 @@ const response = await axiosInstance.get(
  }
 );
 
+const courses = Array.isArray(response.data)
+    ? response.data
+    : Array.isArray(response.data?.data)
+        ? response.data.data
+        : Array.isArray(response.data?.courses)
+            ? response.data.courses
+            : null;
 
-return response.data;
+if (!courses) {
+    throw new Error("The courses API returned an invalid response.");
+}
+
+return courses;
 
 
 };

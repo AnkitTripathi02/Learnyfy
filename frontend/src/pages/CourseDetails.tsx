@@ -414,6 +414,28 @@ const CourseDetails = () => {
                                 ENROLL BUTTON
                             ================================================== */}
                             {!isAdmin && (
+                                <>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate(`/courses/${course.id}/preview`)
+                                    }
+                                    className="
+                                        mt-8
+                                        w-full
+                                        rounded-xl
+                                        border border-indigo-400/40
+                                        bg-indigo-500/10
+                                        py-3
+                                        text-base
+                                        font-bold
+                                        text-indigo-300
+                                        transition
+                                        hover:bg-indigo-500/20
+                                    "
+                                >
+                                    Watch 10-Min Preview
+                                </button>
                                 <button
                                     onClick={async () => {
                                         try {
@@ -732,6 +754,7 @@ const CourseDetails = () => {
                                 >
                                     Enroll Now 🚀
                                 </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -1143,6 +1166,33 @@ const CourseDetails = () => {
                                                                     </div>
 
                                                                     {/* LESSON ACTIONS */}
+                                                                    {!isAdmin && lesson.is_preview && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() =>
+                                                                                navigate(
+                                                                                    `/courses/${course.id}/preview/lesson/${lesson.id}`
+                                                                                )
+                                                                            }
+                                                                            className="
+                                                                                shrink-0
+                                                                                rounded-lg
+                                                                                border
+                                                                                border-emerald-500/30
+                                                                                bg-emerald-500/10
+                                                                                px-3
+                                                                                py-1.5
+                                                                                text-sm
+                                                                                font-semibold
+                                                                                text-emerald-300
+                                                                                transition
+                                                                                hover:bg-emerald-500/20
+                                                                            "
+                                                                        >
+                                                                            Watch Free Preview
+                                                                        </button>
+                                                                    )}
+
                                                                     {isAdmin && (
                                                                         <div
                                                                             className="

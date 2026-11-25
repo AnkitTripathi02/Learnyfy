@@ -4,8 +4,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useEffect, useState } from "react";
-import Profile from "../../pages/Profile";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 import {
   FaGraduationCap,
@@ -15,9 +14,11 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
 
 import { getMyProfile } from "../../api/profileApi";
+
+const Profile = lazy(() => import("../../pages/Profile"));
 
 interface User {
   id?: string | number;
@@ -30,6 +31,7 @@ interface User {
 }
 
 const Navbar = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -242,6 +244,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     setOpenProfile(false);
 
+    const Swal = (await import("sweetalert2")).default;
     const result =
       await Swal.fire({
         icon: "question",
@@ -411,7 +414,7 @@ const Navbar = () => {
               hover:text-indigo-400
             "
             >
-              Home
+              {t("home.home")}
             </Link>
 
             <button
@@ -426,7 +429,7 @@ const Navbar = () => {
               hover:text-indigo-400
             "
             >
-              Categories
+              {t("home.categories")}
             </button>
 
             <Link
@@ -438,7 +441,7 @@ const Navbar = () => {
               hover:text-indigo-400
             "
             >
-              Courses
+              {t("home.courses")}
             </Link>
 
             <button
@@ -453,7 +456,7 @@ const Navbar = () => {
               hover:text-indigo-400
             "
             >
-              About
+              {t("home.about")}
             </button>
 
             <button
@@ -468,7 +471,7 @@ const Navbar = () => {
               hover:text-indigo-400
             "
             >
-              Contact
+              {t("home.contact")}
             </button>
 
           </nav>
@@ -516,7 +519,7 @@ const Navbar = () => {
                   hover:text-white
                 "
                 >
-                  Login
+                  {t("home.login")}
                 </Link>
 
                 <Link
@@ -535,7 +538,7 @@ const Navbar = () => {
                   sm:block
                 "
                 >
-                  Sign Up
+                  {t("home.signup")}
                 </Link>
 
               </div>
@@ -626,7 +629,7 @@ const Navbar = () => {
                       truncate
                       text-sm
                       font-semibold
-                      text-white
+                      text-gray-900 dark:text-white
                     "
                     >
                       {displayName}
@@ -734,7 +737,7 @@ const Navbar = () => {
                             truncate
                             text-sm
                             font-semibold
-                            text-white
+                            text-gray-900 dark:text-white
                           "
                           >
                             {displayName}
@@ -938,9 +941,9 @@ const Navbar = () => {
         </div>
       </header>
       {openProfileModal && (
-        <Profile
-          onClose={() => setOpenProfileModal(false)}
-        />
+        <Suspense fallback={null}>
+          <Profile onClose={() => setOpenProfileModal(false)} />
+        </Suspense>
       )}
     </>
   );

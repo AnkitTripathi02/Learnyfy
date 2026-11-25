@@ -1,10 +1,22 @@
 import Loader from "../components/common/Loader";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { FaClock, FaUserGraduate } from "react-icons/fa";
+import { FaArrowLeft, FaClock, FaUserGraduate } from "react-icons/fa";
 import { getCourses } from "../api/courseApi";
+import { useTranslation } from "react-i18next";
 
 const Courses = () => {
+    const { t } = useTranslation();
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const backPath = !token
+        ? "/"
+        : user.role === "admin"
+            ? "/admin/dashboard"
+            : "/dashboard";
+    const backLabel = !token
+        ? t("home.home")
+        : t("navigation.dashboard");
 
 
     const loadCourses = async () => {
@@ -19,12 +31,14 @@ const Courses = () => {
                 price
             );
 
+            setLoadError(false);
             setCourses(data);
             setFilteredCourses(data);
 
         } catch (error) {
 
-            console.error(error);
+            console.error("Failed to load courses:", error);
+            setLoadError(true);
 
         }
         finally {
@@ -37,6 +51,8 @@ const Courses = () => {
     const [courses, setCourses] = useState<any[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
     const [sortBy, setSortBy] = useState("latest");
 
     const [searchParams] = useSearchParams();
@@ -53,7 +69,7 @@ const Courses = () => {
 
     useEffect(() => {
         loadCourses();
-    }, [search, category, price]);
+    }, [search, category, price, retryCount]);
 
     useEffect(() => {
         let sorted = [...courses];
@@ -110,6 +126,14 @@ const Courses = () => {
         <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-gray-100">
 
             <div className="mx-auto max-w-7xl px-6 py-10">
+
+                <Link
+                    to={backPath}
+                    className="mb-6 inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white/80 px-4 py-2.5 text-sm font-semibold text-indigo-700 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:bg-white hover:shadow-md"
+                >
+                    <FaArrowLeft aria-hidden="true" />
+                    {backLabel}
+                </Link>
 
                 <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">
                     Explore Our Courses
@@ -307,7 +331,20 @@ const Courses = () => {
 
                 </div>
 
-                {filteredCourses.length === 0 && (
+                {loadError ? (
+                    <div className="mt-20 text-center" role="alert">
+                        <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                            We couldn&apos;t load courses. Check your connection and try again.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setRetryCount((count) => count + 1)}
+                            className="mt-4 rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white transition hover:bg-indigo-700"
+                        >
+                            Try again
+                        </button>
+                    </div>
+                ) : filteredCourses.length === 0 && (
                     <div className="mt-20 text-center text-2xl text-gray-500">
                         No courses found.
                     </div>

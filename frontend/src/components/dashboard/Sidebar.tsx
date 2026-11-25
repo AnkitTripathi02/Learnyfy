@@ -14,6 +14,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dispatch, SetStateAction } from "react";
 import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -23,6 +24,7 @@ interface SidebarProps {
 const Sidebar = ({
   collapsed,
 }: SidebarProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -101,36 +103,36 @@ const Sidebar = ({
   const menuItems = isAdmin
     ? [
         {
-          section: "MAIN",
+          section: t("navigation.main"),
           items: [
             {
               icon: <FaHome />,
-              title: "Dashboard",
+              title: t("navigation.dashboard"),
               path: "/admin/dashboard",
             },
             {
               icon: <FaGraduationCap />,
-              title: "Course Management",
+              title: t("navigation.courseManagement"),
               path: "/admin/courses",
             },
             {
               icon: <FaUserGraduate />,
-              title: "Students",
+              title: t("navigation.students"),
               path: "/admin/students",
             },
             {
               icon: <FaCreditCard />,
-              title: "Payments",
+              title: t("navigation.payments"),
               path: "/admin/payments",
             },
             {
               icon: <FaChartLine />,
-              title: "Analytics",
+              title: t("navigation.analytics"),
               path: "/admin/analytics",
             },
             {
               icon: <FaFileInvoice />,
-              title: "Reports",
+              title: t("navigation.reports"),
               path: "/admin/reports",
             },
           ],
@@ -138,28 +140,28 @@ const Sidebar = ({
       ]
     : [
         {
-          section: "MAIN",
+          section: t("navigation.main"),
           items: [
             {
               icon: <FaHome />,
-              title: "Dashboard",
+              title: t("navigation.dashboard"),
               path: "/dashboard",
             },
             {
               icon: <FaGraduationCap />,
-              title: "My Courses",
+              title: t("navigation.myCourses"),
               path: "/dashboard/my-courses",
             },
             {
               icon: <FaSearch />,
-              title: "Explore Courses",
+              title: t("navigation.exploreCourses"),
               path: "/courses",
             },
           ],
         },
 
         {
-          section: "LEARNING",
+          section: t("navigation.learning"),
           items: [
 // {
 //     icon: <FaPlayCircle />,
@@ -168,12 +170,12 @@ const Sidebar = ({
 // },
             {
               icon: <FaChartLine />,
-              title: "My Progress",
+              title: t("navigation.progress"),
               path: "/dashboard/progress",
             },
             {
               icon: <FaTrophy />,
-              title: "Certificates",
+              title: t("navigation.certificates"),
               path: "/dashboard/certificates",
             },
           ],
@@ -258,7 +260,7 @@ const Sidebar = ({
               </h2>
 
               <p className="text-xs text-gray-400">
-                Learning Platform
+                {t("navigation.learningPlatform")}
               </p>
             </div>
           )}

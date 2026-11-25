@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   FaClock,
@@ -22,15 +21,8 @@ const FloatingCourseCard = ({ course }: Props) => {
   const isFree = Number(course.price) === 0;
 
   return (
-    <motion.div
-      whileHover={{
-        y: -12,
-        scale: 1.03,
-      }}
-      transition={{
-        duration: 0.35,
-      }}
-      className="group w-[340px] shrink-0 overflow-hidden rounded-3xl border border-white/10 m-2 mt-5 shadow-xl"
+    <div
+      className="group m-2 mt-5 w-[340px] shrink-0 overflow-hidden rounded-3xl border border-white/10 shadow-xl transition-transform duration-300 hover:-translate-y-3 hover:scale-[1.03]"
     >
       {/* Thumbnail */}
       <div className="relative overflow-hidden">
@@ -41,6 +33,8 @@ const FloatingCourseCard = ({ course }: Props) => {
             "https://placehold.co/600x400?text=LearnyFy"
           }
           alt={course.title}
+          loading="lazy"
+          decoding="async"
           className="h-52 w-full object-cover transition duration-700 group-hover:scale-110"
         />
 
@@ -95,7 +89,7 @@ const FloatingCourseCard = ({ course }: Props) => {
         </Link>
 
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -7,7 +7,50 @@ from models.lesson_progress_model import LessonProgress
 from models.lesson_model import Lesson
 from models.course_model import Course
 from models.module_model import Module
+from models.enrollment_model import Enrollment
 from services.notification_service import create_notification
+
+
+def _require_lesson_access(
+    db: Session,
+    user_id,
+    course_id,
+    lesson: Lesson,
+):
+    if lesson.is_preview:
+        return
+
+    if not user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Purchase or enroll in this course to access this lesson.",
+        )
+
+    enrollment = (
+        db.query(Enrollment)
+        .filter(
+            Enrollment.user_id == user_id,
+            Enrollment.course_id == course_id,
+            Enrollment.isactive.is_(True),
+        )
+        .first()
+    )
+
+    if not enrollment:
+        raise HTTPException(
+            status_code=403,
+            detail="Purchase or enroll in this course to access this lesson.",
+        )
+
+    if enrollment.expires_at:
+        expires_at = enrollment.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if expires_at <= datetime.now(timezone.utc):
+            raise HTTPException(
+                status_code=403,
+                detail="Your course access has expired.",
+            )
 
 
 def mark_lesson_accessed(
@@ -46,6 +89,13 @@ def mark_lesson_accessed(
             status_code=404,
             detail="Lesson not found for this course",
         )
+
+    _require_lesson_access(
+        db,
+        user_id,
+        course_id,
+        lesson,
+    )
 
     progress = (
         db.query(LessonProgress)
@@ -113,6 +163,13 @@ def mark_lesson_completed(
             status_code=404,
             detail="Lesson not found for this course",
         )
+
+    _require_lesson_access(
+        db,
+        user_id,
+        course_id,
+        lesson,
+    )
 
     progress = (
         db.query(LessonProgress)

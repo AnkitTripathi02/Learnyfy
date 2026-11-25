@@ -71,28 +71,28 @@ const handleContinueLearning = () => {
 };
 
     return (
-        <div className="min-h-full bg-[#090817] p-1 sm:px-6 lg:px-8">
+        <div className="student-dashboard min-h-full bg-[#090817] p-1 sm:px-6 lg:px-8">
 
             {/* ================= WELCOME SECTION ================= */}
-            <section className="relative overflow-hidden rounded-3xl border border-[#292440] bg-gradient-to-br from-[#17132a] via-[#121020] to-[#0d0b18] p-2 sm:p-8">
+            <section className="student-dashboard-welcome relative overflow-hidden rounded-3xl border border-[#292440] p-2 sm:p-8">
 
                 {/* Decorative glow */}
                 <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-purple-600/10 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-indigo-600/10 blur-3xl" />
 
-                <div className="relative flex flex-col justify-between gap-2 lg:flex-row lg:items-center">
+                <div className="relative flex flex-col justify-between gap-5 xl:flex-row xl:items-center">
 
                     <div>
-                        <div className="mb-1 inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-xs font-medium text-purple-300">
+                        <div className="student-dashboard-badge mb-1 inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-xs font-medium text-purple-300">
                             <span className="mr-2 h-1.5 w-1.5 rounded-full bg-purple-400" />
                             Student Dashboard
                         </div>
 
-                        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                        <h1 className="student-dashboard-welcome-title text-2xl font-bold tracking-tight text-white sm:text-3xl">
                             Welcome back, {user.full_name || "Student"} 👋
                         </h1>
 
-                        <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400 sm:text-base">
+                        <p className="student-dashboard-welcome-copy mt-3 max-w-xl text-sm leading-6 text-gray-400 sm:text-base">
                             Keep building your skills, complete your courses,
                             and stay consistent with your learning journey.
                         </p>
@@ -101,7 +101,7 @@ const handleContinueLearning = () => {
                     <button
                         // onClick={() => navigate("/dashboard/my-courses")}
                         onClick={handleContinueLearning}
-                        className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-purple-900/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-purple-900/40 sm:w-auto"
+                        className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-purple-900/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-purple-900/40 sm:w-auto xl:shrink-0"
                     >
                         <FaPlay className="text-sm" />
                         Continue Learning
@@ -143,10 +143,10 @@ const handleContinueLearning = () => {
 
 
             {/* ================= LEARNING HEADER ================= */}
-            <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <div className="mt-1 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
 
                 <div>
-                    <h2 className="mt-3 text-2xl font-bold text-white mb-0.5 ml-2">
+                    <h2 className="mt-3 mb-0.5 ml-2 text-2xl font-bold text-white">
                         Learning Overview
                     </h2>
 
@@ -155,7 +155,7 @@ const handleContinueLearning = () => {
 
                 <button
                     onClick={() => navigate("/dashboard/my-courses")}
-                    className="flex items-center gap-2 text-sm font-medium text-purple-400 transition hover:text-purple-300"
+                    className="flex items-center gap-2 text-md font-medium text-purple-400 transition hover:text-purple-300"
                 >
                     View My Courses
                     <FaArrowRight className="text-xs" />
@@ -190,7 +190,7 @@ const handleContinueLearning = () => {
                 {/* Explore Courses */}
                 <button
                     onClick={() => navigate("/courses")}
-                    className="group flex items-center justify-between rounded-2xl border border-[#292440] bg-[#111021] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-500/40 hover:bg-[#15132a]"
+                    className="student-dashboard-quick-action group flex items-center justify-between rounded-2xl border border-[#292440] bg-[#111021] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-500/40 hover:bg-[#15132a]"
                 >
                     <div className="flex items-center gap-4">
 
@@ -199,7 +199,7 @@ const handleContinueLearning = () => {
                         </div>
 
                         <div>
-                            <h3 className="font-semibold text-white">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
                                 Explore New Courses
                             </h3>
 
@@ -217,7 +217,7 @@ const handleContinueLearning = () => {
                 {/* Progress */}
                 <button
                     onClick={() => navigate("/dashboard/progress")}
-                    className="group flex items-center justify-between rounded-2xl border border-[#292440] bg-[#111021] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-500/40 hover:bg-[#15132a]"
+                    className="student-dashboard-quick-action group flex items-center justify-between rounded-2xl border border-[#292440] bg-[#111021] p-5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-500/40 hover:bg-[#15132a]"
                 >
                     <div className="flex items-center gap-4">
 
@@ -226,7 +226,7 @@ const handleContinueLearning = () => {
                         </div>
 
                         <div>
-                            <h3 className="font-semibold text-white">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
                                 Check Your Progress
                             </h3>
 

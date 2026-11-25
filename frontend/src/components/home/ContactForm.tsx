@@ -1,5 +1,4 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import Swal from "sweetalert2";
 import {
     FaEnvelope,
     FaMapMarkerAlt,
@@ -21,12 +20,13 @@ const ContactForm = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const { name, email, message } = formData;
 
         if (!name.trim() || !email.trim() || !message.trim()) {
-            Swal.fire({
+            const Swal = (await import("sweetalert2")).default;
+            await Swal.fire({
                 icon: "warning",
                 title: "Missing Information",
                 text: "Please complete all fields before sending.",
@@ -35,7 +35,8 @@ const ContactForm = () => {
             return;
         }
 
-        Swal.fire({
+        const Swal = (await import("sweetalert2")).default;
+        await Swal.fire({
             icon: "success",
             title: "Message Sent!",
             text: "We will get back to you promptly.",
@@ -66,19 +67,22 @@ const ContactForm = () => {
                         <h2 className="text-3xl font-extrabold text-[#2d3142] tracking-tight mb-3">
                             Let's talk
                         </h2>
-                        <p className="text-sm text-slate-400 leading-relaxed mb-8 max-w-md">
+                        <p className="mb-8 max-w-md text-sm leading-relaxed text-slate-600">
                             To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly.
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                            
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                <label htmlFor="contact-name" className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-600">
                                     Your Name
                                 </label>
                                 <input
+                                    id="contact-name"
                                     type="text"
                                     name="name"
+                                    autoComplete="name"
+                                    required
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     className="w-full rounded-2xl bg-[#f0f2f9] border-none p-4 text-sm text-[#2d3142] outline-none transition-all focus:bg-slate-100 focus:ring-2 focus:ring-indigo-400"
@@ -87,12 +91,15 @@ const ContactForm = () => {
 
                             
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                <label htmlFor="contact-email" className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-600">
                                     Your Email
                                 </label>
                                 <input
-                                    type="text"
+                                    id="contact-email"
+                                    type="email"
                                     name="email"
+                                    autoComplete="email"
+                                    required
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     className="w-full rounded-2xl bg-[#f0f2f9] border-none p-4 text-sm text-[#2d3142] outline-none transition-all focus:bg-slate-100 focus:ring-2 focus:ring-indigo-400"
@@ -101,23 +108,25 @@ const ContactForm = () => {
 
                             
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                <label htmlFor="contact-message" className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-600">
                                     Your Message
                                 </label>
                                 <textarea
+                                    id="contact-message"
                                     rows={4}
                                     name="message"
+                                    required
                                     value={formData.message}
                                     onChange={handleInputChange}
                                     placeholder="Type something if you want..."
-                                    className="w-full rounded-2xl bg-[#f0f2f9] border-none p-4 text-sm text-[#2d3142] placeholder-slate-300 outline-none transition-all focus:bg-slate-100 focus:ring-2 focus:ring-indigo-400 resize-none"
+                                    className="w-full rounded-2xl bg-[#f0f2f9] border-none p-4 text-sm text-[#2d3142]                                     placeholder-slate-500 outline-none transition-all focus:bg-slate-100 focus:ring-2 focus:ring-indigo-400 resize-none"
                                 />
                             </div>
 
                             
                             <button
                                 type="submit"
-                                className="rounded-full bg-[#6467f2] px-8 py-3.5 text-xs font-bold text-white tracking-wider shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-700 hover:shadow-indigo-700/40 active:scale-95"
+                                className="rounded-full bg-indigo-700 px-8 py-3.5 text-xs font-bold tracking-wider text-white shadow-lg shadow-indigo-600/30 transition-all hover:bg-indigo-800 hover:shadow-indigo-700/40 active:scale-95"
                             >
                                 Send Message
                             </button>
@@ -130,7 +139,8 @@ const ContactForm = () => {
                         <div className="relative w-64 h-64 mb-10 flex items-center justify-center select-none pointer-events-none">
                             <div className="absolute inset-0 bg-indigo-50 rounded-full scale-90 blur-xl opacity-70"></div>
                             
-                            <div className="relative border-4 border-dashed border-indigo-100 rounded-full p-8 animate-[spin_40s_linear_infinite]">
+                            <div className="absolute inset-0 rounded-full border-4 border-dashed border-indigo-100 animate-[spin_40s_linear_infinite]"></div>
+                            <div className="relative rounded-full p-8">
                                 <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-50 flex items-center justify-center">
                                     <FaEnvelope className="text-4xl text-[#6467f2] opacity-80" />
                                 </div>
@@ -145,7 +155,7 @@ const ContactForm = () => {
                         <div className="space-y-4 mb-8 text-slate-500 text-sm">
                             <div className="flex items-start justify-center lg:justify-start gap-3">
                                 <FaMapMarkerAlt className="text-indigo-400 mt-1 shrink-0" />
-                                <span>151 New Park Ave, Hartford, CT 06106<br /><span className="text-xs text-slate-400">United States</span></span>
+                                <span>151 New Park Ave, Hartford, CT 06106<br /><span className="text-xs text-slate-600">United States</span></span>
                             </div>
                             <div className="flex items-center justify-center lg:justify-start gap-3">
                                 <FaPhoneAlt className="text-indigo-400 shrink-0" />
@@ -153,21 +163,21 @@ const ContactForm = () => {
                             </div>
                             <div className="flex items-center justify-center lg:justify-start gap-3">
                                 <FaEnvelope className="text-indigo-400 shrink-0" />
-                                <a href="mailto:contactus@invelitasoft.com" className="hover:underline text-indigo-500">contactus@invelitasoft.com</a>
+                                <a href="mailto:contactus@invelitasoft.com" className="text-indigo-700 hover:underline">contactus@invelitasoft.com</a>
                             </div>
                         </div>
 
                         
-                        <div className="flex items-center gap-3">
-                            <a href="#" className="w-9 h-9 rounded-full bg-[#3b5998] text-white flex items-center justify-center text-sm transition hover:scale-110">
+                        <div className="flex items-center gap-3" aria-hidden="true">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#3b5998] text-sm text-white">
                                 <FaFacebookF />
-                            </a>
-                            <a href="#" className="w-9 h-9 rounded-full bg-[#1da1f2] text-white flex items-center justify-center text-sm transition hover:scale-110">
+                            </span>
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1da1f2] text-sm text-white">
                                 <FaTwitter />
-                            </a>
-                            <a href="#" className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 text-white flex items-center justify-center text-sm transition hover:scale-110">
+                            </span>
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 text-white">
                                 <FaInstagram />
-                            </a>
+                            </span>
                         </div>
 
                     </div>

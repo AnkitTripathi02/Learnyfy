@@ -15,6 +15,7 @@ import ProfileInfo from "./ProfileInfo";
 import Security from "./Security";
 import Settings from "./Settings";
 import Notification from "./Notification";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -29,6 +30,7 @@ type ActiveTab =
   | "notifications";
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("home");
@@ -171,7 +173,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               onClick={() => setActiveTab("home")}
               className="mb-5 flex items-center gap-2 text-sm text-gray-400 transition hover:text-white"
             >
-              ← Back to Profile
+              ← {t("profile.back")}
             </button>
           )}
 
@@ -188,7 +190,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 <div className="flex items-center gap-4">
                   <FaUser className="text-purple-400" />
 
-                  <span>My Profile</span>
+                  <span>{t("profile.myProfile")}</span>
                 </div>
 
                 <FaChevronRight className="text-gray-500 transition group-hover:translate-x-1 group-hover:text-white" />
@@ -201,7 +203,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 <div className="flex items-center gap-4">
                   <FaLock className="text-blue-400" />
 
-                  <span>Security</span>
+                  <span>{t("profile.security")}</span>
                 </div>
 
                 <FaChevronRight className="text-gray-500 transition group-hover:translate-x-1 group-hover:text-white" />
@@ -214,7 +216,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 <div className="flex items-center gap-4">
                   <FaCog className="text-yellow-400" />
 
-                  <span>Settings</span>
+                  <span>{t("profile.settings")}</span>
                 </div>
 
                 <FaChevronRight className="text-gray-500 transition group-hover:translate-x-1 group-hover:text-white" />
@@ -229,7 +231,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 <div className="flex items-center gap-4">
                   <FaBell className="text-green-400" />
 
-                  <span>Notifications</span>
+                  <span>{t("profile.notifications")}</span>
                 </div>
 
                 <FaChevronRight className="text-gray-500 transition group-hover:translate-x-1 group-hover:text-white" />
@@ -283,7 +285,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
           >
             <FaSignOutAlt />
 
-            Logout
+            {t("profile.logout")}
           </button>
 
           <p className="mt-3 text-center text-xs text-gray-600">

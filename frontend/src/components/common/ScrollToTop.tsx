@@ -10,10 +10,11 @@ const ScrollToTop = () => {
                 document.documentElement.scrollHeight -
                 document.documentElement.clientHeight;
 
-            const progress =
-                (window.scrollY / totalHeight) * 100;
+            const progress = totalHeight > 0
+                ? (window.scrollY / totalHeight) * 100
+                : 0;
 
-            setScroll(progress);
+            setScroll(Math.min(100, Math.max(0, progress)));
         };
 
         window.addEventListener("scroll", handleScroll);
@@ -33,8 +34,14 @@ const ScrollToTop = () => {
         circumference -
         (scroll / 100) * circumference;
 
+    if (scroll < 1) {
+        return null;
+    }
+
     return (
         <button
+            type="button"
+            aria-label={`Scroll to top, ${Math.round(scroll)}% page progress`}
             onClick={() =>
                 window.scrollTo({
                     top: 0,

@@ -34,7 +34,7 @@ const features = [
 
 const WhyChooseUs = () => {
   return (
-    <div className="px-12">
+    <div className="bg-white px-6 py-16 sm:px-12">
       <div className="text-center">
         <h2 className="text-4xl font-bold text-gray-800">
           Why Choose LearnyFy?
@@ -49,9 +49,9 @@ const WhyChooseUs = () => {
         {features.map((item, index) => (
           <div
             key={index}
-            className="rounded-3xl border border-gray-300 p-8 text-center shadow-lg transition duration-300 hover:-translate-y-3 hover:shadow-2xl"
+            className="rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-3 hover:shadow-2xl"
           >
-            <div className="flex justify-center text-indigo-600">
+            <div aria-hidden="true" className="flex justify-center text-indigo-600">
               {item.icon}
             </div>
 

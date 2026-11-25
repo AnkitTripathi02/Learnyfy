@@ -7,9 +7,12 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useTheme } from "../../context/ThemeContext";
+import { useTranslation } from "react-i18next";
+import { languageNames, LanguageCode } from "../../i18n";
 
 
 const Settings = () => {
+  const { t, i18n } = useTranslation();
   const [notifications, setNotifications] = useState(() => {
     return JSON.parse(
       localStorage.getItem("notifications") ?? "true"
@@ -27,8 +30,11 @@ const {
   setDarkMode,
 } = useTheme();
 
-  const [language, setLanguage] = useState(() => {
-    return localStorage.getItem("language") || "English";
+  const [language, setLanguage] = useState<LanguageCode>(() => {
+    const saved = localStorage.getItem("language");
+    const migrated =
+      saved === "Hindi" ? "hi" : saved === "Marathi" ? "mr" : saved === "English" ? "en" : saved;
+    return migrated && migrated in languageNames ? (migrated as LanguageCode) : "en";
   });
 
   useEffect(() => {
@@ -49,7 +55,8 @@ const {
 
   useEffect(() => {
     localStorage.setItem("language", language);
-  }, [language]);
+    void i18n.changeLanguage(language);
+  }, [language, i18n]);
 
   const Toggle = ({
     enabled,
@@ -138,8 +145,8 @@ const handleSave = () => {
 
   Swal.fire({
     icon: "success",
-    title: "Saved Successfully!",
-    html: "<span style='color:#cbd5e1'>Your preferences have been saved.</span>",
+    title: t("settings.saved"),
+    html: `<span style='color:#cbd5e1'>${t("settings.savedDescription")}</span>`,
     background: "#141222",
     color: "#fff",
     confirmButtonColor: "#8B5CF6",
@@ -162,11 +169,11 @@ const handleSave = () => {
 
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Settings
+            {t("settings.title")}
           </h2>
 
           <p className="text-sm text-gray-500">
-            Customize your LearnyFy experience
+            {t("settings.subtitle")}
           </p>
         </div>
 
@@ -182,11 +189,11 @@ const handleSave = () => {
 
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-white">
-                Notifications
+                {t("settings.notifications")}
               </p>
 
               <p className="text-xs text-gray-500">
-                Receive learning updates
+                {t("settings.notificationsDescription")}
               </p>
             </div>
 
@@ -209,11 +216,11 @@ const handleSave = () => {
 
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-white">
-                Auto Play
+                {t("settings.autoplay")}
               </p>
 
               <p className="text-xs text-gray-500">
-                Automatically play next lesson
+                {t("settings.autoplayDescription")}
               </p>
             </div>
 
@@ -236,11 +243,11 @@ const handleSave = () => {
 
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-white">
-                Dark Mode
+                {t("settings.darkMode")}
               </p>
 
               <p className="text-xs text-gray-500">
-                Use dark interface
+                {t("settings.darkModeDescription")}
               </p>
             </div>
 
@@ -259,15 +266,18 @@ const handleSave = () => {
 
       <div>
         <label className="mb-2 block text-sm text-gray-400">
-          Language
+          {t("settings.language")}
         </label>
 
         <select className="w-full rounded-xl border border-white/10 bg-[#1b1a2b] px-4 py-3 text-gray-900 dark:text-white outline-none focus:border-purple-500"
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => setLanguage(e.target.value as LanguageCode)}
         >
-          <option>English</option>
-          <option>Hindi</option>
+          {(Object.keys(languageNames) as LanguageCode[]).map((code) => (
+            <option key={code} value={code}>
+              {languageNames[code]}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -276,7 +286,7 @@ const handleSave = () => {
         onClick={handleSave}
         className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-3 font-semibold text-gray-900 dark:text-white transition hover:scale-[1.01]"
       >
-        Save Preferences
+        {t("settings.save")}
       </button>
 
     </div>

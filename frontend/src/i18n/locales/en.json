@@ -1,0 +1,62 @@
+{
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your LearnyFy experience",
+    "notifications": "Notifications",
+    "notificationsDescription": "Receive learning updates",
+    "autoplay": "Auto Play",
+    "autoplayDescription": "Automatically play next lesson",
+    "darkMode": "Dark Mode",
+    "darkModeDescription": "Use dark interface",
+    "language": "Language",
+    "save": "Save Preferences",
+    "saved": "Saved Successfully!",
+    "savedDescription": "Your preferences have been saved."
+  },
+  "profile": {
+    "user": "User",
+    "student": "Student",
+    "back": "Back to Profile",
+    "myProfile": "My Profile",
+    "security": "Security",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "logout": "Logout",
+    "accountOverview": "Account Overview",
+    "learning": "Learning",
+    "active": "Active",
+    "courses": "Courses",
+    "management": "Management",
+    "myCourses": "My Courses",
+    "noEmail": "No email"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "adminDashboard": "Admin Dashboard",
+    "courseManagement": "Course Management",
+    "students": "Students",
+    "payments": "Payments",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "myCourses": "My Courses",
+    "progress": "My Progress",
+    "certificates": "Certificates",
+    "profile": "Profile",
+    "settings": "Settings",
+    "exploreCourses": "Explore Courses",
+    "learning": "LEARNING",
+    "main": "MAIN",
+    "learningPlatform": "Learning Platform",
+    "toggleSidebar": "Toggle sidebar"
+  },
+  "home": {
+    "home": "Home",
+    "categories": "Categories",
+    "courses": "Courses",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "signup": "Sign Up",
+    "dashboard": "Dashboard"
+  }
+}

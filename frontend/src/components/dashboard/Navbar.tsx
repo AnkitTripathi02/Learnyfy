@@ -21,6 +21,7 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../../api/notificationApi";
+import { useTranslation } from "react-i18next";
 
 interface NavbarProps {
   collapsed: boolean;
@@ -57,6 +58,7 @@ const Navbar = ({
   collapsed,
   setCollapsed,
 }: NavbarProps) => {
+  const { t } = useTranslation();
   const location = useLocation();
 
   const user = JSON.parse(
@@ -112,45 +114,45 @@ const Navbar = ({
 
   const getPageTitle = () => {
     if (location.pathname.startsWith("/dashboard/certificate/")) {
-      return "Certificate";
+      return t("navigation.certificates");
     }
 
     switch (location.pathname) {
       case "/dashboard":
-        return "Dashboard";
+        return t("navigation.dashboard");
 
       case "/admin/dashboard":
-        return "Admin Dashboard";
+        return t("navigation.adminDashboard");
 
       case "/admin/courses":
-        return "Course Management";
+        return t("navigation.courseManagement");
 
       case "/admin/students":
-        return "Students";
+        return t("navigation.students");
 
       case "/admin/payments":
-        return "Payments";
+        return t("navigation.payments");
 
       case "/admin/analytics":
-        return "Analytics";
+        return t("navigation.analytics");
 
       case "/admin/reports":
-        return "Reports";
+        return t("navigation.reports");
 
       case "/dashboard/my-courses":
-        return "My Courses";
+        return t("navigation.myCourses");
 
       case "/dashboard/progress":
-        return "My Progress";
+        return t("navigation.progress");
 
       case "/dashboard/certificates":
-        return "Certificates";
+        return t("navigation.certificates");
 
       case "/profile":
-        return "Profile";
+        return t("navigation.profile");
 
       case "/settings":
-        return "Settings";
+        return t("navigation.settings");
 
       case "/quiz":
         return "Quiz";

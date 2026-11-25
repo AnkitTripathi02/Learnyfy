@@ -1,0 +1,62 @@
+{
+  "settings": {
+    "title": "सेटिंग्स",
+    "subtitle": "अपने LearnyFy अनुभव को अनुकूलित करें",
+    "notifications": "सूचनाएं",
+    "notificationsDescription": "लर्निंग अपडेट प्राप्त करें",
+    "autoplay": "ऑटो प्ले",
+    "autoplayDescription": "अगला पाठ अपने आप चलाएं",
+    "darkMode": "डार्क मोड",
+    "darkModeDescription": "डार्क इंटरफ़ेस का उपयोग करें",
+    "language": "भाषा",
+    "save": "पसंद सेव करें",
+    "saved": "सफलतापूर्वक सेव हुआ!",
+    "savedDescription": "आपकी पसंद सेव कर ली गई है."
+  },
+  "profile": {
+    "user": "उपयोगकर्ता",
+    "student": "छात्र",
+    "back": "प्रोफ़ाइल पर वापस जाएं",
+    "myProfile": "मेरी प्रोफ़ाइल",
+    "security": "सुरक्षा",
+    "settings": "सेटिंग्स",
+    "notifications": "सूचनाएं",
+    "logout": "लॉग आउट",
+    "accountOverview": "खाता विवरण",
+    "learning": "लर्निंग",
+    "active": "सक्रिय",
+    "courses": "पाठ्यक्रम",
+    "management": "प्रबंधन",
+    "myCourses": "मेरे पाठ्यक्रम",
+    "noEmail": "ईमेल नहीं"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड",
+    "adminDashboard": "एडमिन डैशबोर्ड",
+    "courseManagement": "पाठ्यक्रम प्रबंधन",
+    "students": "छात्र",
+    "payments": "भुगतान",
+    "analytics": "एनालिटिक्स",
+    "reports": "रिपोर्ट",
+    "myCourses": "मेरे पाठ्यक्रम",
+    "progress": "मेरी प्रगति",
+    "certificates": "प्रमाणपत्र",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग्स",
+    "exploreCourses": "पाठ्यक्रम खोजें",
+    "learning": "लर्निंग",
+    "main": "मुख्य",
+    "learningPlatform": "लर्निंग प्लेटफ़ॉर्म",
+    "toggleSidebar": "साइडबार बदलें"
+  },
+  "home": {
+    "home": "होम",
+    "categories": "श्रेणियां",
+    "courses": "पाठ्यक्रम",
+    "about": "हमारे बारे में",
+    "contact": "संपर्क",
+    "login": "लॉगिन",
+    "signup": "साइन अप",
+    "dashboard": "डैशबोर्ड"
+  }
+}

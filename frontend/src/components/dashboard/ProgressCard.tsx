@@ -16,7 +16,7 @@ const ProgressCard = ({
     completedLessons,
 }: ProgressCardProps) => {
     return (
-        <div className="rounded-2xl border border-white/10 bg-[#141222] p-6 shadow-lg">
+        <div className="student-dashboard-card rounded-2xl border border-white/10 bg-[#141222] p-6 shadow-lg">
 
             {/* HEADER */}
             <div className="flex items-center justify-between">
@@ -53,7 +53,7 @@ const ProgressCard = ({
 
                 </div>
 
-                <div className="h-3 w-full overflow-hidden rounded-full bg-[#242236]">
+                <div className="student-dashboard-progress-track h-3 w-full overflow-hidden rounded-full bg-[#242236]">
 
                     <div
                         className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-700"
@@ -74,7 +74,7 @@ const ProgressCard = ({
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
 
                 {/* COURSES */}
-                <div className="rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
+                <div className="student-dashboard-stat rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
 
                     <h3 className="text-2xl font-bold text-white">
                         {totalCourses}
@@ -88,7 +88,7 @@ const ProgressCard = ({
 
 
                 {/* COMPLETED */}
-                <div className="rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
+                <div className="student-dashboard-stat rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
 
                     <h3 className="text-2xl font-bold text-white">
                         {completedCourses}
@@ -102,7 +102,7 @@ const ProgressCard = ({
 
 
                 {/* LESSONS */}
-                <div className="rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
+                <div className="student-dashboard-stat rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
 
                     <h3 className="text-2xl font-bold text-white">
                         {completedLessons}
@@ -119,7 +119,7 @@ const ProgressCard = ({
 
 
                 {/* COMPLETION */}
-                <div className="rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
+                <div className="student-dashboard-stat rounded-xl border border-white/5 bg-[#111021] p-4 text-center">
 
                     <h3 className="text-2xl font-bold text-white">
                         {totalCourses > 0

@@ -42,6 +42,8 @@ const CourseCardMini = ({ course }: Props) => {
             "https://placehold.co/600x350?text=LearnyFy"
           }
           alt={course.title || "Course"}
+          loading="lazy"
+          decoding="async"
           className="
             h-full
             w-full
@@ -187,7 +189,7 @@ const CourseCardMini = ({ course }: Props) => {
             items-center
             gap-2
             text-sm
-            text-gray-500
+            text-gray-700
           ">
             <FaUserGraduate
               className="
@@ -215,7 +217,7 @@ const CourseCardMini = ({ course }: Props) => {
             justify-end
             gap-2
             text-sm
-            text-gray-500
+            text-gray-700
           ">
             <FaClock
               className="

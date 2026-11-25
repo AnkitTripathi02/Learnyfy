@@ -60,6 +60,7 @@ const Hero = () => {
           {/* Stats */}
 
           <div className="mt-14 flex flex-wrap gap-5">
+            <h2 className="sr-only">Learnyfy at a glance</h2>
 
             <div className="flex items-center gap-3 rounded-xl bg-white/10 p-5 backdrop-blur">
               <FaUsers className="text-3xl" />
@@ -112,9 +113,13 @@ const Hero = () => {
         <div className="hidden w-1/2 justify-center lg:flex">
 
           <img
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900"
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=75"
             alt="Learning"
-            className="w-full max-w-xl rounded-3xl shadow-2xl"
+            width="900"
+            height="600"
+            loading="eager"
+            decoding="async"
+            className="aspect-[3/2] w-full max-w-xl rounded-3xl object-cover shadow-2xl"
           />
 
         </div>

@@ -26,7 +26,7 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <div className="px-12">
+    <div className="bg-white px-6 py-16 sm:px-12">
       <div className="text-center">
         <h2 className="text-4xl font-bold text-gray-800">
           What Our Students Say
@@ -41,17 +41,19 @@ const Testimonials = () => {
         {testimonials.map((item, index) => (
           <div
             key={index}
-            className="rounded-3xl border border-gray-300 p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            className="rounded-3xl border border-gray-200 bg-white p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
           >
             <div className="flex items-center gap-4">
               <img
                 src={item.image}
                 alt={item.name}
+                loading="lazy"
+                decoding="async"
                 className="h-16 w-16 rounded-full object-cover"
               />
 
               <div>
-                <h3 className="text-xl font-bold">{item.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900">{item.name}</h3>
 
                 <p className="text-gray-500">{item.role}</p>
               </div>

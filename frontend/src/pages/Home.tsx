@@ -16,12 +16,12 @@ const Home = () => {
       <main className="pt-16">
 
         {/* Hero */}
-        <section id="home">
+        <section>
           <Hero />
         </section>
 
         {/* Categories */}
-        <section id="categories">
+        <section>
           <Categories />
         </section>
 
@@ -40,10 +40,7 @@ const Home = () => {
         </section>
 
         {/* Contact */}
-        <section
-          id="contact"
-          className="scroll-mt-24"
-        >
+        <section className="scroll-mt-24">
           <ContactForm />
         </section>
 

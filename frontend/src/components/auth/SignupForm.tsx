@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
-  FaBookOpen,
   FaEnvelope,
   FaEye,
   FaEyeSlash,
@@ -17,7 +15,6 @@ interface SignupFormProps {
 }
 
 const SignupForm = ({ onLogin }: SignupFormProps) => {
-  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -178,21 +175,7 @@ const SignupForm = ({ onLogin }: SignupFormProps) => {
 
   return (
     <div className="border-0 bg-transparent p-0 shadow-none">
-      <div className="mb-6 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-200 transition hover:bg-white/10 hover:text-white"
-          aria-label="Go to home"
-        >
-          <FaBookOpen className="text-base" />
-        </button>
-        <span className="text-xs font-medium text-slate-400">
-          Join today
-        </span>
-      </div>
-
-      <div className="mb-6">
+      <div className="mb-6 mt-2">
         <h2 className="font-serif text-3xl font-medium text-white sm:text-4xl">Create account</h2>
         <p className="mt-2 text-sm leading-6 text-slate-400">
           Join Learnyfy and start your learning journey today.

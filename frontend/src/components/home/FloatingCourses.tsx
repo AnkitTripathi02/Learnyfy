@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
     FaChevronLeft,
     FaChevronRight,
@@ -18,6 +17,7 @@ const FloatingCourses = () => {
     const [showArrows, setShowArrows] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
+    const sectionRef = useRef<HTMLElement | null>(null);
     const pauseRef = useRef(false);
     const navigate = useNavigate();
 
@@ -43,7 +43,23 @@ const FloatingCourses = () => {
             }
         };
 
-        loadCourses();
+        const section = sectionRef.current;
+        if (!section || !("IntersectionObserver" in window)) {
+            void loadCourses();
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries[0]?.isIntersecting) return;
+                observer.disconnect();
+                void loadCourses();
+            },
+            { rootMargin: "300px" }
+        );
+        observer.observe(section);
+
+        return () => observer.disconnect();
     }, []);
 
     // =========================================================
@@ -121,14 +137,19 @@ const FloatingCourses = () => {
         if (
             !container ||
             courses.length === 0 ||
-            !isOverflowing
+            !isOverflowing ||
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ) {
             return;
         }
 
-        let animationId: number;
+        let animationId: number | null = null;
+        let isVisible = false;
 
         const animate = () => {
+            animationId = null;
+            if (!isVisible || document.hidden) return;
+
             if (!pauseRef.current) {
                 container.scrollLeft += SPEED;
 
@@ -146,17 +167,40 @@ const FloatingCourses = () => {
                 }
             }
 
-            animationId =
-                requestAnimationFrame(animate);
+            animationId = requestAnimationFrame(animate);
         };
 
-        animationId =
-            requestAnimationFrame(animate);
+        const startAnimation = () => {
+            if (animationId === null && isVisible && !document.hidden) {
+                animationId = requestAnimationFrame(animate);
+            }
+        };
+        const stopAnimation = () => {
+            if (animationId !== null) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        };
+        const observer = new IntersectionObserver((entries) => {
+            isVisible = entries[0]?.isIntersecting ?? false;
+            if (isVisible) startAnimation();
+            else stopAnimation();
+        });
+        const handleVisibilityChange = () => {
+            if (document.hidden) stopAnimation();
+            else startAnimation();
+        };
+
+        observer.observe(container);
+        document.addEventListener("visibilitychange", handleVisibilityChange);
 
         return () => {
-            cancelAnimationFrame(
-                animationId
+            observer.disconnect();
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
             );
+            stopAnimation();
         };
     }, [courses, isOverflowing]);
 
@@ -228,6 +272,7 @@ const FloatingCourses = () => {
 
     return (
         <section
+            ref={sectionRef}
             className="
                 relative
                 overflow-hidden
@@ -435,11 +480,7 @@ const FloatingCourses = () => {
                 COURSES
             ================================================== */}
 
-            <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-            >
+            <div>
                 <div
                     ref={containerRef}
                     className={`
@@ -494,7 +535,7 @@ const FloatingCourses = () => {
                         )
                     )}
                 </div>
-            </motion.div>
+            </div>
 
             {/* =================================================
                 NO COURSES

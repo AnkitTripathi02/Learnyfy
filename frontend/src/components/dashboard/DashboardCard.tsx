@@ -12,7 +12,7 @@ const DashboardCard = ({
   icon,
 }: DashboardCardProps) => {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#141222] p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-purple-500">
+    <div className="student-dashboard-card rounded-2xl border border-white/10 bg-[#141222] p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-purple-500">
 
       <div className="flex items-center justify-between">
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const HeroSearch = () => {
 
@@ -12,14 +11,15 @@ const HeroSearch = () => {
   const [price, setPrice] = useState("");
 
 
-const handleSearch = () => {
+const handleSearch = async () => {
 
     if (
         search.trim() === "" &&
         category === "" &&
         price === ""
     ) {
-        Swal.fire({
+        const Swal = (await import("sweetalert2")).default;
+        await Swal.fire({
             icon: "warning",
             title: "Search Required",
             html: `
@@ -45,12 +45,6 @@ const handleSearch = () => {
                 rgba(2,6,23,0.75)
                 backdrop-filter: blur(8px)
             `,
-            showClass: {
-                popup: "animate__animated animate__zoomIn animate__faster",
-            },
-            hideClass: {
-                popup: "animate__animated animate__zoomOut animate__faster",
-            },
             customClass: {
                 popup: "rounded-[24px]",
                 confirmButton: "rounded-xl px-8 py-3 text-base font-semibold",
@@ -86,6 +80,7 @@ const handleSearch = () => {
 
         <input
           type="text"
+          aria-label="Search courses"
           placeholder="Search Course..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -94,6 +89,7 @@ const handleSearch = () => {
 
 
         <select
+          aria-label="Filter by course category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="rounded-xl border w-1/2 border-gray-300 bg-white px-0.5 py-3 text-gray-800 outline-none"
@@ -122,6 +118,7 @@ const handleSearch = () => {
 
 
         <select
+          aria-label="Filter by course price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           className="rounded-xl border border-gray-300 bg-white px-0.5 py-3 text-gray-800 outline-none"
@@ -147,8 +144,9 @@ const handleSearch = () => {
 
 
         <button
+          type="button"
           onClick={handleSearch}
-          className="flex items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-white"
+          className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-6 py-3 text-white hover:bg-green-800"
         >
 
           <FaSearch />

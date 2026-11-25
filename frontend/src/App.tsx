@@ -1,34 +1,46 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Routes, Route, useParams } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-
-import Dashboard from "./pages/Dashboard";
-import MyCourses from "./pages/MyCourses";
-import LearnCourse from "./pages/LearnCourse";
-import CourseCompleted from "./pages/CourseCompleted";
-import Certificate from "./pages/Certificate";
-
-import AdminDashboard from "./pages/Admin/Dashboard/AdminDashboard";
-import CourseManagement from "./pages/Admin/Course/CourseManagement";
-
-import Courses from "./pages/Courses";
-import CourseDetails from "./pages/CourseDetails";
-
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import Faq from "./pages/Faq";
-import NotFound from "./pages/NotFound";
-
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminStudents from "./pages/Admin/Students/AdminStudents";
-import AdminPayments from "./pages/Admin/Payments/AdminPayments";
-import AdminAnalytics from "./pages/Admin/Analytics/AdminAnalytics";
-import AdminReports from "./pages/Admin/Reports/AdminReports";
-import DashboardLayout from "./components/dashboard/DashboardLayout";
-import Progress from "./pages/Progress";
-import Certificates from "./pages/Certificates";
+
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MyCourses = lazy(() => import("./pages/MyCourses"));
+const LearnCourse = lazy(() => import("./pages/LearnCourse"));
+const CourseCompleted = lazy(() => import("./pages/CourseCompleted"));
+const Certificate = lazy(() => import("./pages/Certificate"));
+const AdminDashboard = lazy(() => import("./pages/Admin/Dashboard/AdminDashboard"));
+const CourseManagement = lazy(() => import("./pages/Admin/Course/CourseManagement"));
+const Courses = lazy(() => import("./pages/Courses"));
+const CourseDetails = lazy(() => import("./pages/CourseDetails"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const Faq = lazy(() => import("./pages/Faq"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminStudents = lazy(() => import("./pages/Admin/Students/AdminStudents"));
+const AdminPayments = lazy(() => import("./pages/Admin/Payments/AdminPayments"));
+const AdminAnalytics = lazy(() => import("./pages/Admin/Analytics/AdminAnalytics"));
+const AdminReports = lazy(() => import("./pages/Admin/Reports/AdminReports"));
+const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout"));
+const Progress = lazy(() => import("./pages/Progress"));
+const Certificates = lazy(() => import("./pages/Certificates"));
+const GoogleOAuthProvider = lazy(async () => {
+  const { GoogleOAuthProvider: Provider } = await import("@react-oauth/google");
+  return { default: Provider };
+});
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+const AuthPage = () =>
+  googleClientId ? (
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <Login />
+    </GoogleOAuthProvider>
+  ) : (
+    <Login />
+  );
 
 const LegacyCertificateRedirect = () => {
   const { id } = useParams();
@@ -37,16 +49,32 @@ const LegacyCertificateRedirect = () => {
 
 function App() {
   return (
+<Suspense
+  fallback={
+    <main
+      className="flex min-h-screen items-center justify-center bg-slate-50 text-sm font-medium text-slate-800 dark:bg-slate-950 dark:text-slate-200"
+      role="status"
+      aria-live="polite"
+    >
+      Loading Learnyfy...
+    </main>
+  }
+>
 <Routes>
 
   {/* Public */}
 
   <Route path="/" element={<Home />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/signup" element={<Login />} />
+  <Route path="/login" element={<AuthPage />} />
+  <Route path="/signup" element={<AuthPage />} />
 
   <Route path="/courses" element={<Courses />} />
   <Route path="/courses/:id" element={<CourseDetails />} />
+  <Route path="/courses/:id/preview" element={<LearnCourse />} />
+  <Route
+    path="/courses/:id/preview/lesson/:lesson"
+    element={<LearnCourse />}
+  />
 
   <Route path="/privacy" element={<PrivacyPolicy />} />
   <Route path="/terms" element={<TermsAndConditions />} />
@@ -172,6 +200,7 @@ function App() {
   <Route path="*" element={<NotFound />} />
 
 </Routes>
+</Suspense>
   );
 }
 

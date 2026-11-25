@@ -50,7 +50,7 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
 
     return (
-        <div className="rounded-2xl border border-white/10 bg-[#141222] p-10 shadow-lg">
+        <div className="student-dashboard-card rounded-2xl border border-white/10 bg-[#141222] p-6 shadow-lg">
 
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -77,7 +77,7 @@ const ActivityCard = ({
 
                 {activities.length === 0 ? (
 
-                    <div className="rounded-xl border border-dashed border-white/10 bg-[#111021] px-4 py-8 text-center">
+                    <div className="student-dashboard-empty-state rounded-xl border border-dashed border-white/10 bg-[#111021] px-4 py-8 text-center">
 
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10 text-purple-400">
                             <FaBookOpen />

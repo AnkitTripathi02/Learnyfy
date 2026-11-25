@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import YouTube, { type YouTubeEvent } from "react-youtube";
+import Swal from "sweetalert2";
 import {
     FaArrowLeft,
     FaArrowRight,
@@ -27,6 +29,7 @@ import {
 import { getCourseById } from "../api/courseApi";
 import { getModules } from "../api/moduleApi";
 import { getLessons } from "../api/lessonApi";
+import { getMyCourses } from "../api/enrollmentApi";
 
 const getYouTubeVideoId = (url: string): string | null => {
     try {
@@ -75,6 +78,7 @@ const getYouTubePlaybackError = (errorCode: number) => {
 const LearnCourse = () => {
     const { id, lesson: lessonId } = useParams();
     const navigate = useNavigate();
+    const previewStorageKey = id ? `course-preview-seconds:${id}` : null;
     const user = JSON.parse(
         localStorage.getItem("user") || "{}"
     );
@@ -98,6 +102,23 @@ const LearnCourse = () => {
 
     const [completedLessons, setCompletedLessons] =
         useState<string[]>([]);
+    const [isEnrolled, setIsEnrolled] = useState(false);
+    const [isEnrollmentChecked, setIsEnrollmentChecked] = useState(false);
+    const [previewPlaying, setPreviewPlaying] = useState(false);
+    const [previewWatchedSeconds, setPreviewWatchedSeconds] = useState(() => {
+        if (!previewStorageKey) return 0;
+        const storedSeconds = Number(
+            sessionStorage.getItem(previewStorageKey) || 0
+        );
+        return Number.isFinite(storedSeconds)
+            ? Math.min(600, Math.max(0, storedSeconds))
+            : 0;
+    });
+    const [previewModalShown, setPreviewModalShown] = useState(false);
+    const [previewExpired, setPreviewExpired] = useState(
+        () => previewWatchedSeconds >= 600
+    );
+    const youtubePlayerRef = useRef<any>(null);
 
     //    LOAD COURSE
 
@@ -109,6 +130,108 @@ useEffect(() => {
     useEffect(() => {
         setVideoPlayerError(null);
     }, [selectedLesson?.id]);
+
+    useEffect(() => {
+        setPreviewPlaying(false);
+    }, [selectedLesson?.id]);
+
+    useEffect(() => {
+        if (
+            !isEnrollmentChecked ||
+            isEnrolled ||
+            !previewPlaying ||
+            previewExpired ||
+            !previewStorageKey
+        ) {
+            return;
+        }
+
+        let lastTickAt = Date.now();
+        let fractionalSeconds = 0;
+        const timer = window.setInterval(() => {
+            const now = Date.now();
+            fractionalSeconds += (now - lastTickAt) / 1000;
+            lastTickAt = now;
+            const elapsedSeconds = Math.floor(fractionalSeconds);
+            if (elapsedSeconds === 0) return;
+            fractionalSeconds -= elapsedSeconds;
+
+            setPreviewWatchedSeconds((seconds) => {
+                const nextSeconds = Math.min(600, seconds + elapsedSeconds);
+                sessionStorage.setItem(
+                    previewStorageKey,
+                    String(nextSeconds)
+                );
+                return nextSeconds;
+            });
+        }, 1000);
+
+        return () => window.clearInterval(timer);
+    }, [
+        isEnrolled,
+        isEnrollmentChecked,
+        previewPlaying,
+        previewExpired,
+        previewStorageKey,
+    ]);
+
+    useEffect(() => {
+        setPreviewModalShown(false);
+    }, [id]);
+
+    useEffect(() => {
+        if (
+            !isEnrollmentChecked ||
+            isEnrolled ||
+            previewWatchedSeconds < 600 ||
+            previewModalShown
+        ) {
+            return;
+        }
+
+        youtubePlayerRef.current?.pauseVideo?.();
+        setPreviewPlaying(false);
+        setPreviewExpired(true);
+        setPreviewModalShown(true);
+
+        void Swal.fire({
+            icon: "info",
+            title: "Your free preview has ended",
+            text: "Continue to view the course options and enroll or purchase to keep learning.",
+            background: "#161122",
+            color: "#ffffff",
+            showCancelButton: true,
+            confirmButtonText: "Continue",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#6366f1",
+            cancelButtonColor: "#374151",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate(`/courses/${id}`);
+            }
+        });
+    }, [
+        isEnrolled,
+        isEnrollmentChecked,
+        previewWatchedSeconds,
+        previewModalShown,
+        id,
+        navigate,
+    ]);
+
+    useEffect(() => {
+        if (!previewStorageKey) return;
+
+        const storedSeconds = Number(
+            sessionStorage.getItem(previewStorageKey) || 0
+        );
+        const elapsed = Number.isFinite(storedSeconds)
+            ? Math.min(600, Math.max(0, storedSeconds))
+            : 0;
+
+        setPreviewWatchedSeconds(elapsed);
+        setPreviewExpired(elapsed >= 600);
+    }, [previewStorageKey]);
 
     useEffect(() => {
 
@@ -137,6 +260,7 @@ const loadCourse = async () => {
     try {
         setLoading(true);
         setError("");
+        setIsEnrollmentChecked(false);
 
         const courseData = await getCourseById(id);
         const moduleData = await getModules(id);
@@ -196,10 +320,35 @@ const loadCourse = async () => {
         setLessons(lessonMap);
         setOpenModules(initialOpenState);
 
+        let enrolled = false;
+        if (user?.id) {
+            try {
+                const enrollmentResponse = await getMyCourses(user.id);
+                const enrolledCourses =
+                    enrollmentResponse?.data?.data ??
+                    enrollmentResponse?.data ??
+                    [];
+
+                enrolled = Array.isArray(enrolledCourses)
+                    ? enrolledCourses.some(
+                        (item: any) =>
+                            String(item.course_id ?? item.id) === String(id)
+                    )
+                    : false;
+            } catch (enrollmentError) {
+                console.error(
+                    "Failed to load enrollment:",
+                    enrollmentError
+                );
+            }
+        }
+        setIsEnrolled(enrolled);
+        setIsEnrollmentChecked(true);
+
         // Load progress
         let loadedProgress: any = null;
 
-        if (user?.id) {
+        if (user?.id && enrolled) {
             try {
                 loadedProgress = await getCourseProgress(
                     id,
@@ -230,7 +379,7 @@ console.log(
         // Resume last accessed lesson
 // Resume last accessed lesson
 const resumeLessonId =
-    lessonId || loadedProgress?.last_lesson_id;
+    lessonId || (enrolled ? loadedProgress?.last_lesson_id : null);
 
 let resumeLesson: any = null;
 
@@ -254,7 +403,7 @@ if (resumeLessonId) {
     }
 }
 
-if (resumeLesson) {
+if (enrolled && resumeLesson) {
     setSelectedLesson(resumeLesson);
 
     setOpenModules((prev) => ({
@@ -335,6 +484,10 @@ const selectLesson = async (
     lesson: any,
     moduleId: string
 ) => {
+    if (!isEnrolled && (previewExpired || previewWatchedSeconds >= 600)) {
+        return;
+    }
+
     setSelectedLesson({
         ...lesson,
         moduleId,
@@ -351,7 +504,7 @@ const selectLesson = async (
     });
 
     // Save last accessed lesson
-    if (user?.id && id) {
+    if (isEnrolled && user?.id && id) {
         try {
             await accessLesson(
                 id,
@@ -418,7 +571,7 @@ const selectLesson = async (
 
     const handleLessonComplete = async () => {
 
-        if (!selectedLesson) return;
+        if (!selectedLesson || !isEnrolled) return;
 
         try {
 
@@ -450,6 +603,11 @@ const selectLesson = async (
     const handleVideoEnd = async () => {
   console.log("VIDEO ENDED");
         if (!selectedLesson) return;
+
+        if (!isEnrolled) {
+            setPreviewPlaying(false);
+            return;
+        }
 
         // already completed
         if (completedLessons.includes(String(selectedLesson.id))) {
@@ -1063,6 +1221,12 @@ const selectLesson = async (
 
                                     </div>
 
+                                    {!isEnrolled && (
+                                        <div className="absolute right-4 top-4 z-10 rounded-full border border-amber-400/30 bg-amber-500/15 px-3 py-2 text-[10px] font-bold text-amber-300 backdrop-blur-xl">
+                                            10-minute preview · {Math.max(0, 600 - previewWatchedSeconds)}s left
+                                        </div>
+                                    )}
+
                                     {countdown !== null && (
                                         <div className="absolute bottom-5 right-5 z-20 rounded-xl bg-green-600 px-5 py-3 text-white shadow-xl">
                                             <p className="text-sm font-semibold">
@@ -1075,7 +1239,22 @@ const selectLesson = async (
                                         </div>
                                     )}
 
-{selectedVideoId ? (
+{!isEnrolled && previewExpired ? (
+    <div className="flex aspect-video flex-col items-center justify-center gap-4 bg-slate-100 px-6 text-center text-slate-900 dark:bg-gray-950 dark:text-white">
+        <FaPlayCircle className="text-4xl text-indigo-500" />
+        <p className="text-lg font-bold">Your 10-minute preview has ended</p>
+        <p className="max-w-xl text-sm leading-6">
+            Continue to the course page to enroll or purchase this course.
+        </p>
+        <button
+            type="button"
+            onClick={() => navigate(`/courses/${id}`)}
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500"
+        >
+            Continue to course
+        </button>
+    </div>
+) : selectedVideoId ? (
     videoPlayerError !== null ? (
         <div className="flex aspect-video flex-col items-center justify-center gap-4 bg-slate-100 px-6 text-center text-slate-900 dark:bg-gray-950 dark:text-white">
             <FaPlayCircle className="text-4xl text-indigo-500" />
@@ -1092,17 +1271,24 @@ const selectLesson = async (
             </a>
         </div>
     ) : (
-    <div className="aspect-video w-full">
+    <div className="relative aspect-video w-full overflow-hidden">
         <YouTube
             videoId={selectedVideoId}
             opts={{
-                width: "100%",
-                height: "100%",
+                width: "1280",
+                height: "720",
                 playerVars: {
                     autoplay: 0,
                 },
             }}
-            iframeClassName="h-full w-full"
+            className="absolute inset-0 h-full w-full"
+            iframeClassName="absolute inset-0 h-full w-full"
+            onReady={(event: YouTubeEvent<number>) => {
+                youtubePlayerRef.current = event.target;
+            }}
+            onStateChange={(event: YouTubeEvent<number>) => {
+                setPreviewPlaying(event.data === 1);
+            }}
             onEnd={handleVideoEnd}
             onError={(event: YouTubeEvent<number>) => {
                 console.error("YouTube playback error:", event.data);
@@ -1144,6 +1330,11 @@ const selectLesson = async (
                                         {selectedLesson.is_preview && (
                                             <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-400">
                                                 Free Preview
+                                            </span>
+                                        )}
+                                        {!isEnrolled && !selectedLesson.is_preview && (
+                                            <span className="rounded-full bg-amber-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-amber-400">
+                                                Preview
                                             </span>
                                         )}
 
